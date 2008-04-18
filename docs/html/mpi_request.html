@@ -1,0 +1,125 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mpi_request.rd</title>
+</head>
+<body>
+<h1><a name="label:0" id="label:0">MPI::Request</a></h1><!-- RDLabel: "MPI::Request" -->
+<h2><a name="label:1" id="label:1">Description</a></h2><!-- RDLabel: "Description" -->
+<p>A wrapper class around MPI requests </p>
+<h2><a name="label:2" id="label:2">Methods</a></h2><!-- RDLabel: "Methods" -->
+<h3><a name="label:3" id="label:3">Informational Methods</a></h3><!-- RDLabel: "Informational Methods" -->
+<dl>
+<dt><a name="label:4" id="label:4"><code>MPI::Request#null?()</code></a></dt><!-- RDLabel: "MPI::Request#null?" -->
+<dd>
+<p>Returns true if the request is null.</p>
+<p>C equivalent: <code>request == MPI_REQUEST_NULL</code></p></dd>
+</dl>
+<h3><a name="label:5" id="label:5">Wait Methods</a></h3><!-- RDLabel: "Wait Methods" -->
+<dl>
+<dt><a name="label:6" id="label:6"><code>MPI::Request#wait()</code></a></dt><!-- RDLabel: "MPI::Request#wait" -->
+<dd>
+<p>Waits until the operation identified by the receiver request is complete.  
+If the communication object associated with this request was created by a 
+nonblocking send or receive call, then the request becomes null.
+Returns an MPI::Status object.</p>
+<p>C equivalent: <code>MPI_Wait()</code></p></dd>
+<dt><a name="label:7" id="label:7"><code>MPI::Request.waitany(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.waitany" -->
+<dd>
+<p>Waits until any of the operations identified by the requests in the 
+array of requests <var>ary</var> is complete.  If the communication object 
+associated with this request was created by a nonblocking send or 
+receive call, then the request becomes null.  Returns an array of 
+two elements containing the index of the completed request and an 
+MPI::Status object, respectively.</p>
+<p>C equivalent: <code>MPI_Waitany()</code></p></dd>
+<dt><a name="label:8" id="label:8"><code>MPI::Request.waitall(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.waitall" -->
+<dd>
+<p>Waits until all of the operations identified by the requests in the 
+array of requests <var>ary</var> are complete.  If the communication object 
+associated with any of these requests was created by a nonblocking send or 
+receive call, then those requests become null.  Returns an array of
+MPI::Status objects for each request in <var>ary</var>.  The status of a
+request is at the same index in the return array as the request index
+in <var>ary</var>.</p>
+<p>C equivalent: <code>MPI_Waitall()</code></p></dd>
+<dt><a name="label:9" id="label:9"><code>MPI::Request.waitsome(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.waitsome" -->
+<dd>
+<p>Waits until at least one of the operations identified by the requests in 
+the array of requests <var>ary</var> are complete.  If the communication object 
+associated with any of these requests was created by a nonblocking send or 
+receive call, then those requests become null.  Returns an array of two
+elements containing an array of the completed requests and an array of
+MPI::Status objects for each completed request, respectively.  The status 
+of a request is at the same index in the return status array as the 
+request index in the return request array.</p>
+<p>C equivalent: <code>MPI_Waitsome()</code></p></dd>
+</dl>
+<h3><a name="label:10" id="label:10">Test Methods</a></h3><!-- RDLabel: "Test Methods" -->
+<dl>
+<dt><a name="label:11" id="label:11"><code>MPI::Request#test()</code></a></dt><!-- RDLabel: "MPI::Request#test" -->
+<dd>
+<p>Tests if the operation identified by request is complete.  If the 
+communication object associated with this request was created by a 
+nonblocking send or receive call, then the request becomes null.
+Returns an array of two elements containing a flag (true or false, 
+as the result of the test), and an MPI::Status object, respectively.
+The status object should be ignored if the flag is false.</p>
+<p>C equivalent: <code>MPI_Test()</code></p></dd>
+<dt><a name="label:12" id="label:12"><code>MPI::Request.testany(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.testany" -->
+<dd>
+<p>Tests if any of the operations identified by the requests in the 
+array of requests <var>ary</var> is complete.  If the communication object 
+associated with this request was created by a nonblocking send or 
+receive call, then the request becomes null.  Returns an array of 
+three elements containing a flag (true or false, depending on whether 
+any of the requests were completed), the index of the completed request, 
+and an MPI::Status object, respectively.  The last two array elements
+should be ignored if the flag is false.</p>
+<p>C equivalent: <code>MPI_Testany()</code></p></dd>
+<dt><a name="label:13" id="label:13"><code>MPI::Request.testall(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.testall" -->
+<dd>
+<p>Tests if all of the operations identified by the requests in the 
+array of requests <var>ary</var> are complete.  If the communication object 
+associated with any of these requests was created by a nonblocking send or 
+receive call, then those requests become null.  Returns an array of
+two elements containing a flag (true or false, depending on whether 
+all of the requests were completed) and an array of MPI::Status objects 
+for each request in <var>ary</var>, respectively.  The status of a request is 
+at the same index in the return array as the request index in <var>ary</var>.  
+The status array should be ignored if the flag is false.</p>
+<p>C equivalent: <code>MPI_Testall()</code></p></dd>
+<dt><a name="label:14" id="label:14"><code>MPI::Request.testsome(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.testsome" -->
+<dd>
+<p>Equivalent to <code>MPI::Request#waitsome(ary)</code> except that 
+<code>MPI::Request#testsome(ary)</code> does not block.</p>
+<p>C equivalent: <code>MPI_Testsome()</code></p></dd>
+</dl>
+<h3><a name="label:15" id="label:15">Initiation and Cancellation</a></h3><!-- RDLabel: "Initiation and Cancellation" -->
+<dl>
+<dt><a name="label:16" id="label:16"><code>MPI::Request#cancel()</code></a></dt><!-- RDLabel: "MPI::Request#cancel" -->
+<dd>
+<p>Cancels the request.  Returns true.</p>
+<p>C equivalent: <code>MPI_Cancel()</code></p></dd>
+<dt><a name="label:17" id="label:17"><code>MPI::Request#start()</code></a></dt><!-- RDLabel: "MPI::Request#start" -->
+<dd>
+<p>Starts a request.  Returns true.</p>
+<p>C equivalent: <code>MPI_Start()</code></p></dd>
+<dt><a name="label:18" id="label:18"><code>MPI::Request.startall(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Request.startall" -->
+<dd>
+<p>Starts all the requests in the array of requests <var>ary</var>.  Returns true.</p>
+<p>C equivalent: <code>MPI_Startall()</code></p></dd>
+</dl>
+<h3><a name="label:19" id="label:19">Accessors</a></h3><!-- RDLabel: "Accessors" -->
+<dl>
+<dt><a name="label:20" id="label:20"><code>MPI::Request#object</code></a></dt><!-- RDLabel: "MPI::Request#object" -->
+<dd>
+<p>Returns the object associated with the request.</p>
+<p>C equivalent: Accessing the buffer given in the creation of the request.</p></dd>
+</dl>
+
+</body>
+</html>

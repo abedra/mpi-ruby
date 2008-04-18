@@ -1,0 +1,139 @@
+Function				    Status
+--------				    ------
+--------Point to Point-----------------
+MPI_Send				    Implemented
+MPI_Recv				    Implemented
+MPI_Get_count			    Never
+MPI_Bsend				    Implemented
+MPI_Ssend				    Implemented
+MPI_Rsend				    Implemented
+MPI_Buffer_attach		    Implemented (buffer_for)
+MPI_Buffer_detach		    Implemented (unbuffer)
+MPI_Isend				    Implemented
+MPI_Ibsend				    Implemented
+MPI_Issend				    Implemented
+MPI_Irsend				    Implemented
+MPI_Irecv				    Implemented
+MPI_Wait				    Implemented
+MPI_Test				    Implemented
+MPI_Request_free		    Never
+MPI_Waitany				    Implemented
+MPI_Testany				    Implemented
+MPI_Waitall				    Implemented
+MPI_Testall				    Implemented
+MPI_Waitsome			    Implemented
+MPI_Testsome			    Implemented
+MPI_Iprobe				    Implemented
+MPI_Probe				    Implemented
+MPI_Cancel				    Implemented
+MPI_Test_cancelled		    Implemented
+MPI_Send_init			    Implemented
+MPI_Bsend_init			    Implemented
+MPI_Ssend_init			    Implemented
+MPI_Rsend_init			    Implemented
+MPI_Recv_init			    Implemented
+MPI_Start				    Implemented
+MPI_Startall			    Implemented
+MPI_Sendrecv			    Implemented
+MPI_Sendrecv_replace	    Never
+MPI_Type_contiguous		    Never
+MPI_Type_vector			    Never
+MPI_Type_hvector		    Never
+MPI_Type_indexed		    Never
+MPI_Type_hindexed		    Never
+MPI_Type_struct			    Never
+MPI_Address				    Never
+MPI_Type_extent			    Never
+MPI_Type_size			    Never
+MPI_Type_lb				    Never
+MPI_Type_ub				    Never
+MPI_Type_commit			    Never
+MPI_Type_free			    Never
+MPI_Get_elements		    Never
+MPI_Pack				    Never
+MPI_Unpack				    Never
+MPI_Pack_size			    Never
+
+----------Collective-------------------
+MPI_Barrier				    Implemented
+MPI_Bcast				    Implemented
+MPI_Gather				    Implemented
+MPI_Gatherv				    Implemented
+MPI_Scatter				    Implemented
+MPI_Scatterv			    Implemented
+MPI_Allgather			    Implemented
+MPI_Allgatherv			    Implemented
+MPI_Alltoall			    Implemented
+MPI_Alltoallv			    Implemented
+MPI_Reduce				    Implemented
+MPI_Op_create			    Implemented
+MPI_Op_free				    Never
+MPI_Allreduce			    Implemented
+MPI_Reduce_scatter		    Implemented
+MPI_Scan				    Implemented
+
+---Groups, Contexts, and Communicators----
+MPI_Group_size              Implemented
+MPI_Group_rank              Implemented
+MPI_Group_translate_ranks   Implemented
+MPI_Group_compare           Implemented
+MPI_Comm_group              Implemented
+MPI_Group_union             Implemented
+MPI_Group_intersection      Implemented
+MPI_Group_difference        Implemented
+MPI_Group_incl              Implemented
+MPI_Group_excl              Implemented
+MPI_Group_range_incl        Implemented
+MPI_Group_range_excl        Implemented
+MPI_Group_free              Never (GC)
+MPI_Comm_size               Implemented
+MPI_Comm_rank               Implemented
+MPI_Comm_compare            Implemented
+MPI_Comm_dup                Implemented
+MPI_Comm_create             Implemented
+MPI_Comm_split              implemented
+MPI_Comm_free               Never (GC)
+MPI_Comm_test_inter         Implemented
+MPI_Comm_remote_size        Implemented
+MPI_Comm_remote_group       Implemented
+MPI_Intercomm_create        Implemented
+MPI_Intercomm_merge         Implemented
+MPI_Keyval_create           Implemented
+MPI_Keyval_free             Implemented
+MPI_Attr_put                Implemented
+MPI_Attr_get                Implemented
+MPI_Attr_delete             Implemented
+--------------Topologies-------------------
+MPI_Cart_create             Implemented
+MPI_Dims_create             Implemented
+MPI_Graph_create            Implemented
+MPI_Topo_test               Implemented
+MPI_Graphdims_get           Implemented
+MPI_Graph_get               Implemented
+MPI_Cartdim_get             Implemented
+MPI_Cart_get                Implemented
+MPI_Cart_rank               Implemented
+MPI_Cart_coords             Implemented
+MPI_Graph_neighbors_count   Implemented
+MPI_Graph_neighbors         Implemented
+MPI_Cart_shift              Implemented
+MPI_Cart_sub                Implemented
+MPI_Cart_map                Implemented
+MPI_Graph_map               Implemented
+-------------Environmental------------------
+MPI_Get_processor_name      Implemented
+MPI_Errhandler_create       ???
+MPI_Errhandler_set          ???
+MPI_Errhandler_get          ???
+MPI_Errhandler_free         ???
+MPI_Error_string            ???
+MPI_Error_class             ???
+MPI_Wtime                   Implemented
+MPI_Wtick                   Implemented
+MPI_Init                    Never
+MPI_Finalize                Never
+MPI_Initialized             Implemented
+MPI_Abort                   Implemented
+-----------Profiling------------------------
+MPI_Pcontrol                ???
+

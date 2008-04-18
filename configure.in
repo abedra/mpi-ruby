@@ -1,0 +1,113 @@
+AC_INIT([src/main.c])
+
+AM_CONFIG_HEADER(config.h)
+AC_CANONICAL_SYSTEM
+AM_INIT_AUTOMAKE(mpi_ruby, 0.3)
+
+# Checks for programs.
+AC_ARG_WITH(mpi-path,
+		[  --with-mpi-path=mpi-path      Specify where to find MPI],
+		MPI_BIN_DIR="$withval/bin")
+if test "$MPI_BIN_DIR"; then
+	AC_PATH_PROG(MPICC_PATH, mpicc, "no", "$MPI_BIN_DIR") 
+else
+	AC_PATH_PROG(MPICC_PATH, mpicc, "no") 
+fi
+if test "$MPICC_PATH" = "no"; then
+	AC_MSG_ERROR([mpicc is necessary to build mpi_ruby])
+fi
+CC="$MPICC_PATH"
+AC_PROG_CC
+
+# -------------- Check Ruby --------------
+AC_ARG_WITH(ruby-prefix, 
+		    [  --with-ruby-prefix=<prefix>   Prefix where Ruby is installed],
+			ruby_prefix="$withval",
+			ruby_prefix="")
+
+if test "$ruby_prefix"; then
+	PATH="$ruby_prefix/bin:$PATH"
+fi
+AC_PATH_PROGS(RUBY, [ruby])
+if test -z "$RUBY"; then
+	AC_MSG_ERROR([ruby is necessary to build mpi_ruby])
+fi
+
+AC_MSG_CHECKING(that ruby works...)
+"$RUBY" -e 'true' 2> /dev/null
+if test "$?" = "0"; then
+	AC_MSG_RESULT(yes)
+else
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([ruby does not appear to work correctly.  Check your installation])
+fi
+
+AC_MSG_CHECKING(ruby version >= 1.6.4)
+RUBY_VERSION=`$RUBY -e 'puts VERSION'`
+# @<:@ = '[' and @:>@ = ']' in autoconf.  This stinks.
+RUBY_MAJOR=`$RUBY -e 'puts VERSION.split(".")@<:@0@:>@'`
+if test "$RUBY_MAJOR" -lt "1"; then
+	OLD_RUBY_VERSION="yes"
+fi
+RUBY_MINOR=`$RUBY -e 'puts VERSION.split(".")@<:@1@:>@'`
+if test "$RUBY_MINOR" -lt "6"; then
+	OLD_RUBY_VERSION="yes"
+fi
+RUBY_MICRO=`$RUBY -e 'puts VERSION.split(".")@<:@2@:>@'`
+if test "$RUBY_MICRO" -lt "4"; then
+	OLD_RUBY_VERSION="yes"
+fi
+if test "$OLD_RUBY_VERSION"; then
+	AC_MSG_RESULT(no)
+	AC_MSG_ERROR([You have Ruby version "$RUBY_VERSION", but version 1.6.4 is required.  Please upgrade.])
+fi
+AC_MSG_RESULT(yes - $RUBY_VERSION)
+
+AC_MSG_CHECKING(for Ruby Config module)
+"$RUBY" -e 'require "rbconfig"' 2>/dev/null
+if test ! "$?" = "0"; then
+	AC_MSG_RESULT(no)
+	AC_MSG_WARN(Could not find Config Ruby module.  Assuming CFLAGS and LIBS for Ruby are in standard path...)
+	RUBY_CFLAGS=""
+	RUBY_LIBS="-lruby"
+else
+	AC_MSG_RESULT(yes)
+	AC_MSG_CHECKING(ruby CFLAGS)
+	RB_ARCH_DIR=`$RUBY -e 'require "rbconfig"; puts Config::CONFIG@<:@"archdir"@:>@'`
+	RB_INCLUDE_DIR=`$RUBY -e 'require "rbconfig"; puts Config::CONFIG@<:@"includedir"@:>@'`
+	RUBY_CFLAGS="-I$RB_ARCH_DIR -I$RB_INCLUDE_DIR"
+	AC_MSG_RESULT($RUBY_CFLAGS)
+	AC_MSG_CHECKING(ruby LIBS)
+	RB_LIB_DIR=`$RUBY -e 'require "rbconfig"; puts Config::CONFIG@<:@"libdir"@:>@'`
+	RUBY_LIBS="-lruby -L$RB_LIB_DIR"
+	AC_MSG_RESULT($RUBY_LIBS)
+fi
+AC_SUBST(RB_ARCH_DIR)
+AC_SUBST(RB_INCLUDE_DIR)
+AC_SUBST(RB_LIB_DIR)
+AC_SUBST(RUBY_CFLAGS)
+AC_SUBST(RUBY_LIBS)
+
+AC_ARG_WITH(max-ops,
+		    [  --with-max-ops=<number>       The maximum number of MPI operations allowed],
+			MAX_OPS="$withval",
+			MAX_OPS="25")
+AC_SUBST(MAX_OPS)
+
+
+# Checks for header files.
+AC_HEADER_STDC
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_TYPE_SIGNAL
+
+AC_OUTPUT([Makefile
+           src/Makefile
+		   docs/Makefile
+		   docs/html/Makefile
+		   docs/man/Makefile
+		   docs/man/man1/Makefile
+		   docs/man/man3/Makefile
+		   docs/rd/Makefile
+		   examples/Makefile])

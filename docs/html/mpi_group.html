@@ -1,0 +1,99 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mpi_group.rd</title>
+</head>
+<body>
+<h1><a name="label:0" id="label:0">MPI::Group</a></h1><!-- RDLabel: "MPI::Group" -->
+<h2><a name="label:1" id="label:1">Description</a></h2><!-- RDLabel: "Description" -->
+<p>A wrapper class around MPI groups </p>
+<h2><a name="label:2" id="label:2">Methods</a></h2><!-- RDLabel: "Methods" -->
+<h3><a name="label:3" id="label:3">Constructors</a></h3><!-- RDLabel: "Constructors" -->
+<h3><a name="label:4" id="label:4">Informational Methods</a></h3><!-- RDLabel: "Informational Methods" -->
+<dl>
+<dt><a name="label:5" id="label:5"><code>MPI::Group#size()</code></a></dt><!-- RDLabel: "MPI::Group#size" -->
+<dd>
+<p>Returns the size of the group.</p>
+<p>C equivalent: <code>MPI_Group_size()</code></p></dd>
+<dt><a name="label:6" id="label:6"><code>MPI::Group#rank()</code></a></dt><!-- RDLabel: "MPI::Group#rank" -->
+<dd>
+<p>Returns the rank of the current process within the communicator.</p>
+<p>C equivalent: <code>MPI_Comm_rank()</code></p></dd>
+<dt><a name="label:7" id="label:7"><code>MPI::Group#translate_ranks(<var>ary</var>, <var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#translate_ranks" -->
+<dd>
+<p>Translates the group rankings listed in <var>ary</var> for the receiver group
+into rankings in <var>grp</var>.  The new rankings are returned in an array, 
+ordered respectively to <var>ary</var>.  If any of the rankings in <var>ary</var> 
+do not correspond to a ranking in <var>grp</var>, the corresponding entry in
+the return array is <code>MPI::UNDEFINED</code>.</p>
+<p>C equivalent: <code>MPI_Group_translate_ranks()</code></p></dd>
+<dt><a name="label:8" id="label:8"><code>MPI::Group#==(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#==" -->
+<dd>
+<p>Returns true if the receiver and <var>grp</var> are precisely equal.</p>
+<p>C equivalent: <code>MPI_Group_compare()</code></p></dd>
+<dt><a name="label:9" id="label:9"><code>MPI::Group#similar?(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#similar?" -->
+<dd>
+<p>Returns true if the receiver and <var>grp</var> are precisely similar.</p>
+<p>C equivalent: <code>MPI_Group_compare()</code></p></dd>
+</dl>
+<h3><a name="label:10" id="label:10">Constructors</a></h3><!-- RDLabel: "Constructors" -->
+<dl>
+<dt><a name="label:11" id="label:11"><code>MPI::Group#|(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#|" -->
+<dd>
+<p>Returns the union of the receiver group and <var>grp</var>.</p>
+<p>C equivalent: <code>MPI_Group_union()</code></p></dd>
+<dt><a name="label:12" id="label:12"><code>MPI::Group#union(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#union" -->
+<dd>
+<p>An alias for MPI::Group#|()</p>
+<p>C equivalent: <code>MPI_Group_union()</code></p></dd>
+<dt><a name="label:13" id="label:13"><code>MPI::Group#-(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#-" -->
+<dd>
+<p>Returns the difference of the receiver group and <var>grp</var>.</p>
+<p>C equivalent: <code>MPI_Group_difference()</code></p></dd>
+<dt><a name="label:14" id="label:14"><code>MPI::Group#difference(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#difference" -->
+<dd>
+<p>An alias for MPI::Group#-()</p>
+<p>C equivalent: <code>MPI_Group_difference()</code></p></dd>
+<dt><a name="label:15" id="label:15"><code>MPI::Group#&amp;(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#&" -->
+<dd>
+<p>Returns the intersection of the receiver group and <var>grp</var>.</p>
+<p>C equivalent: <code>MPI_Group_intersection()</code></p></dd>
+<dt><a name="label:16" id="label:16"><code>MPI::Group#intersection(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Group#intersection" -->
+<dd>
+<p>An alias for MPI::Group#&amp;()</p>
+<p>C equivalent: <code>MPI_Group_intersection()</code></p></dd>
+<dt><a name="label:17" id="label:17"><code>MPI::Group#incl(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Group#incl" -->
+<dd>
+<p>Returns a new group with only those ranks listed in <var>ary</var></p>
+<p>C equivalent: <code>MPI_Group_incl()</code></p></dd>
+<dt><a name="label:18" id="label:18"><code>MPI::Group#range_incl(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Group#range_incl" -->
+<dd>
+<p>Returns a new group with only those ranks in an array of ranges, 
+<var>ary</var>.  <var>ary</var> is an array in which each element is an array of 
+size three, describing a range.  The first element of one of these size 3
+arrays is the start of the range, the second element is the end of the
+range, and the third element is the stride taken between the range 
+endpoints.  The stride may be negative, but not zero.  The ranks must be
+distinct.</p>
+<p>C equivalent: <code>MPI_Group_range_incl()</code></p></dd>
+<dt><a name="label:19" id="label:19"><code>MPI::Group#excl(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Group#excl" -->
+<dd>
+<p>Returns a new group with only those ranks not listed in <var>ary</var></p>
+<p>C equivalent: <code>MPI_Group_excl()</code></p></dd>
+<dt><a name="label:20" id="label:20"><code>MPI::Group#range_excl(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Group#range_excl" -->
+<dd>
+<p>Returns a new group with only those ranks not in an array of ranges, 
+<var>ary</var>.  <var>ary</var> is an array in which each element is an array of 
+size three, describing a range.  The first element of one of these size 3
+arrays is the start of the range, the second element is the end of the
+range, and the third element is the stride taken between the range 
+endpoints.  The stride may be negative, but not zero.  The ranks must be
+distinct.</p>
+<p>C equivalent: <code>MPI_Group_range_excl()</code></p></dd>
+</dl>
+
+</body>
+</html>
