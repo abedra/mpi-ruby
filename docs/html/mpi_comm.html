@@ -1,0 +1,443 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mpi_comm.rd</title>
+</head>
+<body>
+<h1><a name="label:0" id="label:0">MPI::Comm</a></h1><!-- RDLabel: "MPI::Comm" -->
+<h2><a name="label:1" id="label:1">Description</a></h2><!-- RDLabel: "Description" -->
+<p>A wrapper class around MPI communicators</p>
+<h2><a name="label:2" id="label:2">Methods</a></h2><!-- RDLabel: "Methods" -->
+<h3><a name="label:3" id="label:3">Constructors</a></h3><!-- RDLabel: "Constructors" -->
+<dl>
+<dt><a name="label:4" id="label:4"><code>MPI::Comm#dup()</code></a></dt><!-- RDLabel: "MPI::Comm#dup" -->
+<dd>
+<p>Duplicates the communicator and returns a new communicator.</p>
+<p>C equivalent: <code>MPI_Comm_dup()</code></p></dd>
+<dt><a name="label:5" id="label:5"><code>MPI::Comm.create(<var>grp</var>)</code></a></dt><!-- RDLabel: "MPI::Comm.create" -->
+<dd>
+<p>Creates a new communicator from the <var>grp</var> (of type MPI::Group).</p>
+<p>C equivalent: <code>MPI_Comm_create()</code></p></dd>
+<dt><a name="label:6" id="label:6"><code>MPI::Comm#split(<var>color</var>, <var>key</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#split" -->
+<dd>
+<p>Splits the receiver into new communicators indicated by <var>color</var>.
+<var>key</var> is used to determine ordering in the new communicators.</p>
+<p>C equivalent: <code>MPI_Comm_split()</code></p></dd>
+<dt><a name="label:7" id="label:7"><code>MPI::Comm#intercomm_create(<var>local_leader</var>, <var>peer</var>, <var>remote_leader</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#intercomm_create" -->
+<dd>
+<p>Creates a new intercommunicator using the receiver and <var>peer</var>.</p>
+<p>C equivalent: <code>MPI_Intercomm_create()</code></p></dd>
+<dt><a name="label:8" id="label:8"><code>MPI::Comm#intercomm_merge(<var>high</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#intercomm_merge" -->
+<dd>
+<p>Creates a new intracommunicator from the two communicators of the receiver.
+<var>high</var> is used to determine the ranking in the new communicator.</p>
+<p>C equivalent: <code>MPI_Intercomm_merge()</code></p></dd>
+</dl>
+<h4><a name="label:9" id="label:9">Topology Constructors</a></h4><!-- RDLabel: "Topology Constructors" -->
+<dl>
+<dt><a name="label:10" id="label:10"><code>MPI::Comm#cart_create(<var>dims</var>, <var>periods</var>, <var>reorder</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#cart_create" -->
+<dd>
+<p>Creates a new communicator to which cartesian topology information is
+attached.  <var>dims</var> is an array specifying the number of processes in
+each dimension.  <var>periods</var> is an array of logical values specifying
+whether the grid is periodic or not in each dimension.  <var>reorder</var> is
+a logical value indicating whether the processes may be reordered in the
+new topology.</p>
+<p>C equivalent: <code>MPI_Cart_create()</code></p></dd>
+<dt><a name="label:11" id="label:11"><code>MPI::Comm#graph_create(<var>index</var>, <var>edges</var>, <var>reorder</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#graph_create" -->
+<dd>
+<p>Creates a new communicator to which graph topology information is
+attached.  <var>index</var> is an array in which the <var>i</var>-th entry is the
+the total number of neighbors of the first <var>i</var> nodes.  <var>edges</var>
+is a flattened array of the edge lists for nodes 0, 1, ...<code>index.length</code>
+<var>reorder</var> is a logical value indicating whether the processes may 
+be reordered in the new topology.</p>
+<p>C equivalent: <code>MPI_Graph_create()</code></p></dd>
+</dl>
+<h3><a name="label:12" id="label:12">Attributes</a></h3><!-- RDLabel: "Attributes" -->
+<dl>
+<dt><a name="label:13" id="label:13"><code>MPI::Comm#attr_put(<var>keyval</var>, <var>obj</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#attr_put" -->
+<dd>
+<p>Sets the attribute associated with MPI::Keyval <var>keyval</var> and the
+receiver communicator to <var>obj</var>.  Returns true.</p>
+<p>C equivalent:  <code>MPI_Attr_put()</code></p></dd>
+<dt><a name="label:14" id="label:14"><code>MPI::Comm#attr_get(<var>keyval</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#attr_get" -->
+<dd>
+<p>Returns the object attribute associated with MPI::Keyval <var>keyval</var> and
+the receiver communicator if one exists and nil otherwise.</p>
+<p>C equivalent:  <code>MPI_Attr_get()</code></p></dd>
+<dt><a name="label:15" id="label:15"><code>MPI::Comm#attr_delete(<var>keyval</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#attr_delete" -->
+<dd>
+<p>Deletes the object attribute associated with MPI::Keyval <var>keyval</var> and
+the receiver communicator if one exists.  Returns true.</p>
+<p>C equivalent:  <code>MPI_Attr_delete()</code></p></dd>
+</dl>
+<h3><a name="label:16" id="label:16">Informational Methods</a></h3><!-- RDLabel: "Informational Methods" -->
+<dl>
+<dt><a name="label:17" id="label:17"><code>MPI::Comm#size()</code></a></dt><!-- RDLabel: "MPI::Comm#size" -->
+<dd>
+<p>Returns the size of the communicator.</p>
+<p>C equivalent: <code>MPI_Comm_size()</code></p></dd>
+<dt><a name="label:18" id="label:18"><code>MPI::Comm#rank()</code></a></dt><!-- RDLabel: "MPI::Comm#rank" -->
+<dd>
+<p>Returns the rank of the current process within the communicator.</p>
+<p>C equivalent: <code>MPI_Comm_rank()</code></p></dd>
+<dt><a name="label:19" id="label:19"><code>MPI::Comm#group()</code></a></dt><!-- RDLabel: "MPI::Comm#group" -->
+<dd>
+<p>Returns a handle to the group of the receiver communicator.</p>
+<p>C equivalent: <code>MPI_Comm_group()</code></p></dd>
+<dt><a name="label:20" id="label:20"><code>MPI::Comm#inter?()</code></a></dt><!-- RDLabel: "MPI::Comm#inter?" -->
+<dd>
+<p>Returns true if the receiver is an intercommunicator.</p>
+<p>C equivalent: <code>MPI_Comm_test_inter()</code></p></dd>
+<dt><a name="label:21" id="label:21"><code>MPI::Comm#remote_size()</code></a></dt><!-- RDLabel: "MPI::Comm#remote_size" -->
+<dd>
+<p>Returns the size of the remote communicator of the intercommunicator.</p>
+<p>C equivalent: <code>MPI_Comm_remote_size()</code></p></dd>
+<dt><a name="label:22" id="label:22"><code>MPI::Comm#remote_group()</code></a></dt><!-- RDLabel: "MPI::Comm#remote_group" -->
+<dd>
+<p>Returns the remote group communicator of the intercommunicator.</p>
+<p>C equivalent: <code>MPI_Comm_remote_group()</code></p></dd>
+</dl>
+<h4><a name="label:23" id="label:23">Topology Specific Information Methods</a></h4><!-- RDLabel: "Topology Specific Information Methods" -->
+<dl>
+<dt><a name="label:24" id="label:24"><code>MPI::Comm#topo_test()</code></a></dt><!-- RDLabel: "MPI::Comm#topo_test" -->
+<dd>
+<p>Returns MPI::Comm.GRAPH if the topology associated with the receiver
+communicator is a graph, MPI::Comm.CART if the topology is cartesian, and
+MPI::UNDEFINED if there is no associated topology.</p>
+<p>C equivalent: <code>MPI_Topo_test()</code></p></dd>
+<dt><a name="label:25" id="label:25"><code>MPI::Comm#graphdims()</code></a></dt><!-- RDLabel: "MPI::Comm#graphdims" -->
+<dd>
+<p>Returns an array of two elements: the first being an integer describing the
+number of nodes and the second being an integer describing the number of 
+edges in the graph topology.</p>
+<p>C equivalent: <code>MPI_Graphdims_get()</code></p></dd>
+<dt><a name="label:26" id="label:26"><code>MPI::Comm#graphdims_get()</code></a></dt><!-- RDLabel: "MPI::Comm#graphdims_get" -->
+<dd>
+<p>An alias for MPI::Comm#graphdims().</p>
+<p>C equivalent: <code>MPI_Graphdims_get()</code></p></dd>
+<dt><a name="label:27" id="label:27"><code>MPI::Comm#graph()</code></a></dt><!-- RDLabel: "MPI::Comm#graph" -->
+<dd>
+<p>Returns an array of two elements containing the arrays <var>index</var> and
+<var>edges</var> as given to the MPI::Comm#graph_create() method, respectively.</p>
+<p>C equivalent: <code>MPI_Graph_get()</code></p></dd>
+<dt><a name="label:28" id="label:28"><code>MPI::Comm#graph_get()</code></a></dt><!-- RDLabel: "MPI::Comm#graph_get" -->
+<dd>
+<p>An alias for MPI::Comm#graph()</p>
+<p>C equivalent: <code>MPI_Graph_get()</code></p></dd>
+<dt><a name="label:29" id="label:29"><code>MPI::Comm#cartdim()</code></a></dt><!-- RDLabel: "MPI::Comm#cartdim" -->
+<dd>
+<p>Returns the number of dimensions in the cartesian topology attached to the
+receiver.</p>
+<p>C equivalent: <code>MPI_Cartdim_get()</code></p></dd>
+<dt><a name="label:30" id="label:30"><code>MPI::Comm#cartdim_get()</code></a></dt><!-- RDLabel: "MPI::Comm#cartdim_get" -->
+<dd>
+<p>An alias for MPI::Comm#cartdim().</p>
+<p>C equivalent: <code>MPI_Cartdim_get()</code></p></dd>
+<dt><a name="label:31" id="label:31"><code>MPI::Comm#cart()</code></a></dt><!-- RDLabel: "MPI::Comm#cart" -->
+<dd>
+<p>Returns an array of 3 elements containing a <var>dims</var> array, <var>periods</var>
+array, and <var>coords</var> array as given to cart_create().</p>
+<p>C equivalent: <code>MPI_Cart_get()</code></p></dd>
+<dt><a name="label:32" id="label:32"><code>MPI::Comm#cart_get()</code></a></dt><!-- RDLabel: "MPI::Comm#cart_get" -->
+<dd>
+<p>An alias for MPI::Comm#cart()</p>
+<p>C equivalent: <code>MPI_Cart_get()</code></p></dd>
+<dt><a name="label:33" id="label:33"><code>MPI::Comm#cart_rank(<var>coords</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#cart_rank" -->
+<dd>
+<p>Returns the rank of the process at the coordinates given in the array
+<var>coords</var>.</p>
+<p>C equivalent: <code>MPI_Cart_rank()</code></p></dd>
+<dt><a name="label:34" id="label:34"><code>MPI::Comm#cart_coords(<var>rank</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#cart_coords" -->
+<dd>
+<p>Returns an array of the coordinates of the process specified by <var>rank</var>.</p>
+<p>C equivalent: <code>MPI_Cart_coords()</code></p></dd>
+<dt><a name="label:35" id="label:35"><code>MPI::Comm#graph_neigbhors_count(<var>rank</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#graph_neigbhors_count" -->
+<dd>
+<p>Returns an integer specifying the number of neighbors of the process 
+specified by <var>rank</var>.</p>
+<p>C equivalent: <code>MPI_Graph_neighbors_count()</code></p></dd>
+<dt><a name="label:36" id="label:36"><code>MPI::Comm#graph_neigbhors(<var>rank</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#graph_neigbhors" -->
+<dd>
+<p>Returns an array of the ranks of the neighbors of the process specified 
+by <var>rank</var>.</p>
+<p>C equivalent: <code>MPI_Graph_neighbors()</code></p></dd>
+<dt><a name="label:37" id="label:37"><code>MPI::Comm#cart_shift(<var>dir</var>, <var>disp</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#cart_shift" -->
+<dd>
+<p>Returns an array of two elements containing the rank of the source process
+and the rank of the destination process, respectively, as might be used
+in MPI::Comm#sendrecv().  <var>dir</var> indicates the direction of the shift
+and <var>disp</var> indicates the displacement.</p>
+<p>C equivalent: <code>MPI_Cart_shift()</code></p></dd>
+<dt><a name="label:38" id="label:38"><code>MPI::Comm#cart_map(<var>dims</var>, <var>periods</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#cart_map" -->
+<dd>
+<p>Returns an integer specifying the optimal placement for the calling 
+process on the physical machine.  <var>dims</var> and <var>periods</var> are as for
+MPI::Comm#cart_create().</p>
+<p>C equivalent: <code>MPI_Cart_map()</code></p></dd>
+<dt><a name="label:39" id="label:39"><code>MPI::Comm#graph_map(<var>index</var>, <var>edges</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#graph_map" -->
+<dd>
+<p>Returns an integer specifying the optimal placement for the calling 
+process on the physical machine.  <var>index</var> and <var>edges</var> are as for
+MPI::Comm#graph_create()</p>
+<p>C equivalent: <code>MPI_Graph_map()</code></p></dd>
+</dl>
+<h3><a name="label:40" id="label:40">Point-to-Point Communications</a></h3><!-- RDLabel: "Point-to-Point Communications" -->
+<dl>
+<dt><a name="label:41" id="label:41"><code>MPI::Comm#send(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#send" -->
+<dd>
+<p>Sends object <var>obj</var> to process <var>dest</var> within the communicator with
+tag <var>tag</var>.  Returns true on success.</p>
+<p>C equivalent: <code>MPI_Send()</code></p></dd>
+<dt><a name="label:42" id="label:42"><code>MPI::Comm#recv(<var>src</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#recv" -->
+<dd>
+<p>Receives an object from process <var>src</var> within the communicator with tag
+<var>tag</var>.  Returns an array of two elements containing the object
+received and an MPI::Status object, respectively.</p>
+<p>C equivalent: <code>MPI_Recv()</code></p></dd>
+<dt><a name="label:43" id="label:43"><code>MPI::Comm#bsend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#bsend" -->
+<dd>
+<p>Sends object <var>obj</var> to process <var>dest</var> within the communicator with
+tag <var>tag</var>.  Buffering is used (see <!-- Reference, RDLabel "MPI::Comm#buffer_for()" doesn't exist --><em class="label-not-found">MPI::Comm#buffer_for()</em><!-- Reference end -->). 
+Returns true on success.</p>
+<p>C equivalent: <code>MPI_Bsend()</code></p></dd>
+<dt><a name="label:44" id="label:44"><code>MPI::Comm#ssend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#ssend" -->
+<dd>
+<p>Sends object <var>obj</var> to process <var>dest</var> within the communicator with
+tag <var>tag</var> synchronously.  Returns true on success.</p>
+<p>C equivalent: <code>MPI_Ssend()</code></p></dd>
+<dt><a name="label:45" id="label:45"><code>MPI::Comm#rsend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#rsend" -->
+<dd>
+<p>Sends object <var>obj</var> to process <var>dest</var> within the communicator with
+tag <var>tag</var> with the assumption that the receiver has already begun a
+receiving call.
+Returns true on success.</p>
+<p>C equivalent: <code>MPI_Rsend()</code></p></dd>
+<dt><a name="label:46" id="label:46"><code>MPI::Comm#sendrecv(<var>obj</var>, <var>dest</var>, <var>dtag</var>, <var>src</var>, <var>stag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#sendrecv" -->
+<dd>
+<p>Sends object <var>obj</var> to process <var>dest</var> within the communicator with
+tag <var>dtag</var> and simultaneously starts a receive from process <var>src</var>
+with tag <var>stag</var>.  Returns an array of two elements containing the 
+object received and an MPI::Status object, respectively.</p>
+<p>C equivalent: <code>MPI_Sendrecv()</code></p></dd>
+</dl>
+<h4><a name="label:47" id="label:47">Non-blocking Point-to-Point Communications</a></h4><!-- RDLabel: "Non-blocking Point-to-Point Communications" -->
+<dl>
+<dt><a name="label:48" id="label:48"><code>MPI::Comm#isend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#isend" -->
+<dd>
+<p>Performs a non-blocking send of object <var>obj</var> to process <var>dest</var> 
+within the communicator with tag <var>tag</var>.  Returns a new MPI::Request
+object.</p>
+<p>C equivalent: <code>MPI_Isend()</code></p></dd>
+<dt><a name="label:49" id="label:49"><code>MPI::Comm#irecv(<var>src</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#irecv" -->
+<dd>
+<p>Performs a non-blocking receive of an object from process <var>src</var> within 
+the communicator with tag <var>tag</var>.  Returns a new MPI::Request object.</p>
+<p>C equivalent: <code>MPI_Irecv()</code></p></dd>
+<dt><a name="label:50" id="label:50"><code>MPI::Comm#ibsend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#ibsend" -->
+<dd>
+<p>Performs a non-blocking send of object <var>obj</var> to process <var>dest</var> 
+within the communicator with tag <var>tag</var>.  Buffering is used 
+(see <!-- Reference, RDLabel "MPI::Comm#buffer_for()" doesn't exist --><em class="label-not-found">MPI::Comm#buffer_for()</em><!-- Reference end -->).  Returns a new MPI::Request
+object.</p>
+<p>C equivalent: <code>MPI_Ibsend()</code></p></dd>
+<dt><a name="label:51" id="label:51"><code>MPI::Comm#issend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#issend" -->
+<dd>
+<p>Performs a non-blocking, synchronous send of object <var>obj</var> to process 
+<var>dest</var> within the communicator with tag <var>tag</var> tag <var>tag</var> 
+syncronously.  Returns a new MPI::Request object.</p>
+<p>C equivalent: <code>MPI_Issend()</code></p></dd>
+<dt><a name="label:52" id="label:52"><code>MPI::Comm#irsend(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#irsend" -->
+<dd>
+<p>Performs a non-blocking send of object <var>obj</var> to process <var>dest</var> 
+within the communicator with tag <var>tag</var> with the assumption that the 
+receiver has already begun a receiving call.  Returns a new MPI::Request 
+object.</p>
+<p>C equivalent: <code>MPI_Irsend()</code></p></dd>
+</dl>
+<h4><a name="label:53" id="label:53">Persistent Communications</a></h4><!-- RDLabel: "Persistent Communications" -->
+<dl>
+<dt><a name="label:54" id="label:54"><code>MPI::Comm#send_init(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#send_init" -->
+<dd>
+<p>Sets up a persistent send of object <var>obj</var> to process <var>dest</var> 
+within the communicator with tag <var>tag</var>.  Returns a new MPI::Request
+object.</p>
+<p>C equivalent: <code>MPI_Send_init()</code></p></dd>
+<dt><a name="label:55" id="label:55"><code>MPI::Comm#recv_init(<var>src</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#recv_init" -->
+<dd>
+<p>Sets up a persistent receive of an object from process <var>src</var> within 
+the communicator with tag <var>tag</var>.  Returns a new MPI::Request object.</p>
+<p>C equivalent: <code>MPI_Recv_init()</code></p></dd>
+<dt><a name="label:56" id="label:56"><code>MPI::Comm#bsend_init(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#bsend_init" -->
+<dd>
+<p>Sets up a persistent send of object <var>obj</var> to process <var>dest</var> 
+within the communicator with tag <var>tag</var>.  Buffering is used 
+(see <!-- Reference, RDLabel "MPI::Comm#buffer_for()" doesn't exist --><em class="label-not-found">MPI::Comm#buffer_for()</em><!-- Reference end -->).  Returns a new MPI::Request
+object.</p>
+<p>C equivalent: <code>MPI_Bsend_init()</code></p></dd>
+<dt><a name="label:57" id="label:57"><code>MPI::Comm#ssend_init(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#ssend_init" -->
+<dd>
+<p>Sets up a persistent, synchronous send of object <var>obj</var> to process 
+<var>dest</var> within the communicator with tag <var>tag</var> tag <var>tag</var> 
+syncronously.  Returns a new MPI::Request object.</p>
+<p>C equivalent: <code>MPI_Ssend_init()</code></p></dd>
+<dt><a name="label:58" id="label:58"><code>MPI::Comm#rsend_init(<var>obj</var>, <var>dest</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#rsend_init" -->
+<dd>
+<p>Sets up a persistent send of object <var>obj</var> to process <var>dest</var> 
+within the communicator with tag <var>tag</var> with the assumption that the 
+receiver has already begun a receiving call.  Returns a new MPI::Request 
+object.</p>
+<p>C equivalent: <code>MPI_Rsend_init()</code></p></dd>
+</dl>
+<h3><a name="label:59" id="label:59">Buffering Methods</a></h3><!-- RDLabel: "Buffering Methods" -->
+<dl>
+<dt><a name="label:60" id="label:60"><code>MPI::Comm#buffer_for(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#buffer_for" -->
+<dd>
+<p>Sets up buffering on the receiver communicator to account for the objects
+in the array <var>ary</var>.  Returns true.</p>
+<p>C equivalent: <code>MPI_Buffer_attach()</code></p></dd>
+<dt><a name="label:61" id="label:61"><code>MPI::Comm#unbuffer()</code></a></dt><!-- RDLabel: "MPI::Comm#unbuffer" -->
+<dd>
+<p>Removes the buffer associated with the receiver communicator.  Returns
+true.</p>
+<p>C equivalent: <code>MPI_Buffer_detach()</code></p></dd>
+</dl>
+<h3><a name="label:62" id="label:62">Collective Operations</a></h3><!-- RDLabel: "Collective Operations" -->
+<dl>
+<dt><a name="label:63" id="label:63"><code>MPI::Comm#barrier()</code></a></dt><!-- RDLabel: "MPI::Comm#barrier" -->
+<dd>
+<p>Performs a barrier operation on the communicator.</p>
+<p>C equivalent: <code>MPI_Barrier()</code></p></dd>
+<dt><a name="label:64" id="label:64"><code>MPI::Comm#bcast(<var>obj</var>, <var>root</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#bcast" -->
+<dd>
+<p>Broadcasts <var>obj</var> from process <var>root</var> to all other processes.
+The value of <var>obj</var> is irrelevant for all processes other than 
+<var>root</var>.  Returns a copy of <var>obj</var> all processes other than <var>root</var>
+and <var>obj</var> itself on process <var>root</var>.</p>
+<p>C equivalent: <code>MPI_Bcast</code></p></dd>
+<dt><a name="label:65" id="label:65"><code>MPI::Comm#gather(<var>obj</var>, <var>root</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#gather" -->
+<dd>
+<p>Gathers <var>obj</var> from all processes in the communicator into an array
+and returns this array at process <var>root</var>.  Given a rank <var>r</var>, the
+<var>r</var>-th element of the array is a copy of <var>obj</var> on process <var>r</var>.
+Returns true on all processes other than <var>root</var>.</p>
+<p>C equivalent: <code>MPI_Gather(), MPI_Gatherv()</code></p></dd>
+<dt><a name="label:66" id="label:66"><code>MPI::Comm#allgather(<var>obj</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#allgather" -->
+<dd>
+<p>Gathers <var>obj</var> from all processes in the communicator into an array
+and returns this array at all processes.  Given a rank <var>r</var>, the
+<var>r</var>-th element of the array is a copy of <var>obj</var> on process <var>r</var>.</p>
+<p>C equivalent: <code>MPI_Allgather(), MPI_Allgatherv()</code></p></dd>
+<dt><a name="label:67" id="label:67"><code>MPI::Comm#scatter(<var>ary</var>, <var>root</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#scatter" -->
+<dd>
+<p>Scatters the contents of the array <var>ary</var> on the process with rank
+<var>root</var> to all processes in the communicator.  The array must have
+length equal to the number of processes in the communicator.  Returns
+the <var>i</var>-th object in <var>ary</var> at the <var>i</var>-th process.</p>
+<p>C equivalent: <code>MPI_Scatter()</code></p></dd>
+<dt><a name="label:68" id="label:68"><code>MPI::Comm#alltoall(<var>ary</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#alltoall" -->
+<dd>
+<p>Scatters the contents of the array <var>ary</var> on every process to all 
+processes in the communicator.  The array must have length equal to 
+the number of processes in the communicator.  Returns an array on each
+process where the <var>i</var>-th object in the array on the <var>j</var>-th 
+process is <var>j</var>-th object in <var>ary</var> at the <var>i</var>-th process.</p>
+<p>C equivalent: <code>MPI_Alltoall()</code></p></dd>
+<dt><a name="label:69" id="label:69"><code>MPI::Comm#reduce(<var>obj</var>, <var>op</var>, <var>root</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#reduce" -->
+<dd>
+<p>Reduces the object <var>obj</var> given using the MPI::Op <var>op</var> and returns
+the result of the reduction on the process with rank <var>root</var>.  On all 
+other processes, the method returns true.  If <var>obj</var> is an array, it 
+must have the same length on all processes and the operation is applied 
+to each object in the array.  To perform an operation on an array, pass 
+an array of the array to which the operation will be applied.</p>
+<p>C equivalent: <code>MPI_Reduce()</code></p></dd>
+<dt><a name="label:70" id="label:70"><code>MPI::Comm#allreduce(<var>obj</var>, <var>op</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#allreduce" -->
+<dd>
+<p>Reduces the object <var>obj</var> given using the MPI::Op <var>op</var> and returns
+the result of the reduction to all processes.  If <var>obj</var> is an array, 
+it must have the same length on all processes and the operation is applied 
+to each object in the array.  To perform an operation on an array, pass 
+an array of the array to which the operation will be applied.</p>
+<p>C equivalent: <code>MPI_Allreduce()</code></p></dd>
+<dt><a name="label:71" id="label:71"><code>MPI::Comm#scan(<var>obj</var>, <var>op</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#scan" -->
+<dd>
+<p>At each process <var>i</var>, returns the value of a reduction on processes 
+0...<var>i</var>, inclusively.  If <var>obj</var> is an array, it must have the same 
+length on all processes and the operation is applied to each object in the 
+array.  To perform an operation on an array, pass an array of the array 
+to which the operation will be applied.</p>
+<p>C equivalent: <code>MPI_Scan()</code></p></dd>
+<dt><a name="label:72" id="label:72"><code>MPI::Comm#reduce_scatter(<var>ary</var>, <var>counts</var>, <var>op</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#reduce_scatter" -->
+<dd>
+<p>Performs an element-wise reduction on <var>ary</var> with MPI::Op <var>op</var> 
+and scatters the result according to the array <var>counts</var>.  Process 0
+receives an array of the first <var>counts[0]</var> elements of the result of 
+the reduction, process 1 receives an array of the next <var>counts[1]</var>
+elements of the result of the reduction, and so on.  <var>ary</var> must have
+the same length on all processes and this length must equal the sum of
+the values in <var>counts</var>.</p>
+<p>C equivalent: <code>MPI_Reduce_scatter()</code></p></dd>
+</dl>
+<h3><a name="label:73" id="label:73">Probing</a></h3><!-- RDLabel: "Probing" -->
+<dl>
+<dt><a name="label:74" id="label:74"><code>MPI::Comm#probe(<var>src</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#probe" -->
+<dd>
+<p>Blocks until a message is available from process <var>src</var> with tag 
+<var>tag</var>.  Returns a new MPI::Status object.</p>
+<p>C equivalent: <code>MPI_Probe()</code></p></dd>
+<dt><a name="label:75" id="label:75"><code>MPI::Comm#iprobe(<var>src</var>, <var>tag</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#iprobe" -->
+<dd>
+<p>Returns an array of two elements.  The first element is a flag which
+is true if there is a message from the given source <var>src</var> with the
+given <var>tag</var>.  If the flag is true, then the second element of the
+return array is a new MPI::Status object.  If the flag is false, the
+second element of the return array is to be ignored.</p>
+<p>C equivalent: <code>MPI_Iprobe()</code></p></dd>
+</dl>
+<h3><a name="label:76" id="label:76">Comparison</a></h3><!-- RDLabel: "Comparison" -->
+<dl>
+<dt><a name="label:77" id="label:77"><code>MPI::Comm#==(<var>comm</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#==" -->
+<dd>
+<p>Returns true if the receiver and the given communicator <var>comm</var> are
+the same communicator.  Returns false otherwise.</p>
+<p>C equivalent: <code>MPI_Comm_compare()</code></p></dd>
+<dt><a name="label:78" id="label:78"><code>MPI::Comm#congruent?(<var>comm</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#congruent?" -->
+<dd>
+<p>Returns true if the receiver and the given communicator <var>comm</var> are
+precisely congruent.  Returns false otherwise.</p>
+<p>C equivalent: <code>MPI_Comm_compare()</code></p></dd>
+<dt><a name="label:79" id="label:79"><code>MPI::Comm#similar?(<var>comm</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#similar?" -->
+<dd>
+<p>Returns true if the receiver and the given communicator <var>comm</var> are
+precisely similar.  Returns false otherwise.</p>
+<p>C equivalent: <code>MPI_Comm_compare()</code></p></dd>
+</dl>
+<h3><a name="label:80" id="label:80">Abortive Methods</a></h3><!-- RDLabel: "Abortive Methods" -->
+<dl>
+<dt><a name="label:81" id="label:81"><code>MPI::Comm#abort(<var>errorcode</var>)</code></a></dt><!-- RDLabel: "MPI::Comm#abort" -->
+<dd>
+<p>Aborts the MPI program with the given error code.</p>
+<p>C equivalent: <code>MPI_Abort()</code></p></dd>
+</dl>
+<h2><a name="label:82" id="label:82">Constants</a></h2><!-- RDLabel: "Constants" -->
+<p><var>MPI::Comm.ANY_TAG</var></p>
+<pre>A value which may be passed to any method expecting a tag.  It specifies
+that any tag will match in that call.</pre>
+<p><var>MPI::Comm.ANY_SOURCE</var></p>
+<pre>A value which may be passed to any method expecting a source rank.  It 
+specifies that any source rank will match in that call.</pre>
+<h2><a name="label:83" id="label:83">Notes</a></h2><!-- RDLabel: "Notes" -->
+<p>The MPI binding to Ruby is intended solely for Single Program, Multiple Data
+(SPMD) parallel computations.  Thus, none of these communication methods can
+be intermixed with MPI programs written in other languages.  </p>
+<p>Because of the Multiple Data aspect, sending objects should be viewed as
+creating a copy of the original object on the recipient process.  There are
+no remote method invocation concepts explicitly supported in this binding.</p>
+
+</body>
+</html>

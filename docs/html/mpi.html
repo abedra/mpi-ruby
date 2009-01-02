@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mpi.rd</title>
+</head>
+<body>
+<h1><a name="label:0" id="label:0">MPI</a></h1><!-- RDLabel: "MPI" -->
+<h2><a name="label:1" id="label:1">Description</a></h2><!-- RDLabel: "Description" -->
+<p>The module containing all MPI classes and constants</p>
+<h2><a name="label:2" id="label:2">Methods</a></h2><!-- RDLabel: "Methods" -->
+<h3><a name="label:3" id="label:3">Informational Methods</a></h3><!-- RDLabel: "Informational Methods" -->
+<dl>
+<dt><a name="label:4" id="label:4"><code>MPI.wtime()</code></a></dt><!-- RDLabel: "MPI.wtime" -->
+<dd>
+<p>Returns a double precision floating-point number that is the time in seconds
+since some arbitrary point of time in the past.  The point is guaranteed
+not to change during the lifetime of the process.</p>
+<p>C equivalent: <code>MPI_Wtime()</code></p></dd>
+<dt><a name="label:5" id="label:5"><code>MPI.wtick()</code></a></dt><!-- RDLabel: "MPI.wtick" -->
+<dd>
+<p>Returns a double precision floating-point number that is the time in seconds
+between successive ticks of the clock.</p>
+<p>C equivalent: <code>MPI_Wtick()</code></p></dd>
+<dt><a name="label:6" id="label:6"><code>MPI.initialized?()</code></a></dt><!-- RDLabel: "MPI.initialized?" -->
+<dd>
+<p>Returns true if MPI has been initialized.  (Note that because of the
+runtime system of MPI Ruby, this will always return true.)</p>
+<p>C equivalent: <code>MPI_Initialized()</code></p></dd>
+<dt><a name="label:7" id="label:7"><code>MPI.processor_name()</code></a></dt><!-- RDLabel: "MPI.processor_name" -->
+<dd>
+<p>Returns the processor name of the current processor.</p>
+<p>C equivalent: <code>MPI_Get_processor_name()</code></p></dd>
+<dt><a name="label:8" id="label:8"><code>MPI.dims_create(<var>nnodes</var>, <var>dims</var>)</code></a></dt><!-- RDLabel: "MPI.dims_create" -->
+<dd>
+<p>Returns an array containing cartesian dimensions suitable for use with
+MPI::Comm#cart_create().  <var>nnodes</var> is an integer specifying the total
+number of processes.  The array <var>dims</var> should have length equal to 
+the desired number of dimensions and should contain integers.  If an entry
+<var>i</var> in <var>dims</var> is positive, the <var>i</var>-th entry in the returned
+array will be precisely <var>dims[i]</var>.  If <var>dims[i]</var> is 0, the
+corresponding entry in the returned array will be determined by the
+method.  A negative entry in <var>dims</var> is incorrect.</p>
+<p>C equivalent: <code>MPI_Dims_create()</code></p></dd>
+</dl>
+<h3><a name="label:9" id="label:9">Constants</a></h3><!-- RDLabel: "Constants" -->
+<p><var>MPI::UNDEFINED</var></p>
+<pre>An opaque value that is used by various methods to specify that a value is
+undefined.</pre>
+
+</body>
+</html>

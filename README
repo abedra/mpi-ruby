@@ -1,0 +1,208 @@
+MPI Ruby
+========
+Project maintainer: Aaron Bedra (aaron@aaronbedra.com)
+
+MPI Ruby is a Ruby binding of MPI. The primary goal in making this
+binding was to make the power of MPI available to Ruby users in a way
+that fits into the language's object oriented model. In order to do this,
+the buffer and datatype management necessary in the C, C++, and Fortran
+bindings have been removed.  What this means is that MPI Ruby allows
+you to treat objects as messages.
+
+MPI Ruby also aims to be a complete binding to MPI in that it offers
+access to nearly all functionality of MPI. While there is not a
+one-to-one correspondence to functions and constants in the Ruby and
+C/C++/Fortran bindings, all of the communication and topology features
+are available. There are fewer methods in the Ruby binding than there
+are functions in the C/C++/Fortran bindings, but this is mainly due
+to the fact that the programmer no longer needs to deal with buffers
+and datatypes.
+
+Prerequesites
+=============
+
+To build MPI Ruby, you need a version of MPI installed and a version
+of Ruby installed, of course.  You also need to have the Ruby shared
+library, libruby.so, and the Ruby header files.  If these are not on
+your system and you have built Ruby from source, you need to rebuild
+Ruby with the --enable-shared option passed to Ruby's configure script.
+If you installed Ruby from an RPM or other package, you may need to
+install the 'developer package' of Ruby.
+
+Building MPI Ruby
+=================
+
+The usual should suffice:
+	
+	./configure [standard options]
+	make
+
+If you want to install MPI Ruby, use this:
+
+	make install
+
+There are three non-standard options that configure can accept as well:
+
+	--with-mpi-path=<prefix>
+
+	This option lets you specify the installation directory of your MPI
+	implementation.
+
+	--with-ruby-prefix=<prefix>
+
+	This option lets you specify where Ruby is installed.
+
+	--with-max-ops=<number>
+
+	By default, the user is only allowed to create 25 MPI operations.  If
+	you would like to allow more or less, set it with this option.
+
+Using MPI Ruby
+==============
+
+When MPI Ruby is built, an executable called 'mpi_ruby' is created.
+This is an MPI program with a Ruby interpreter built in.  It preloads a
+Ruby module named 'MPI' to which all the MPI methods belong.  In order to
+run an MPI program written in Ruby with mpirun, you would use this syntax:
+
+	mpirun -np 5 mpi_ruby my-mpi-prog.rb
+
+In this example, we're running the MPI program in the Ruby source file
+'my-mpi-prog.rb' with 5 processes.  You can also use any extended syntax
+in this line that is supported by your MPI distribution.
+
+A Quick Look at a Ruby MPI Program
+==================================
+
+The first thing to note about MPI programs that you will write in Ruby is that
+it is no longer necessary to call MPI_Init or MPI_Finalize.  Because of the
+MPI runtime environment, these calls are already made for you in mpi_ruby.
+
+Let's take a look at a program where all the processes simply identify their
+ranks:
+
+ranks.rb
+--------
+puts "Hello, I am #{MPI::Comm::WORLD.rank()} of #{MPI::Comm::WORLD.size()}"
+--------
+
+And to run this program, we might use this command line:
+
+	mpirun -np 5 mpi_ruby ranks.rb
+
+And we might get this output:
+
+	Hello, I am 2 of 5
+	Hello, I am 0 of 5
+	Hello, I am 1 of 5
+	Hello, I am 4 of 5
+	Hello, I am 3 of 5
+
+Now let's look at the program text.  Notice the calls
+MPI::Comm::WORLD.rank() and MPI::Comm::WORLD.size().  In both cases,
+we're referencing the constant communicator WORLD in the Comm class of
+the MPI module.  This communicator corresponds to the MPI_COMM_WORLD
+communicator in C.  On this communicator, we've invoked the rank() and
+size() methods that get the process' rank in the communicator and the
+size of the communicator, respectively.
+
+Let's look at an example with point-to-point communication:
+
+basic.rb
+--------
+myrank = MPI::Comm::WORLD.rank()
+csize = MPI::Comm::WORLD.size()
+
+if myrank % 2 == 0 then
+	if myrank + 1 != csize then
+		hello = "Hello, I'm #{myrank}, you must be #{myrank+1}"
+		MPI::Comm::WORLD.send(hello, myrank + 1, 0)
+	end
+else
+	msg, status = MPI::Comm::WORLD.recv(myrank - 1, 0)
+	puts "I'm #{myrank} and this message came from #{status.source} with tag #{status.tag}: '#{msg}'"
+end
+--------
+
+Again, the invocation may look like this:
+
+	% mpirun -np 6 mpi_ruby basic.rb
+	I'm 1 and this message came from 0 with tag 0: 'Hello, I'm 0, you must be 1'
+	I'm 3 and this message came from 2 with tag 0: 'Hello, I'm 2, you must be 3'
+	I'm 5 and this message came from 4 with tag 0: 'Hello, I'm 4, you must be 5'
+
+In this example, all of the processes with an even rank send a message
+to the next process (unless there are an odd number of processes, in
+which case the last process does nothing) and the odd ranked processes
+receive a message from the previous process.
+
+The two calls in this example that do the communication are send()
+and recv() in the MPI::Comm::WORLD communicator.  In the send call,
+the first argument is the object to send, the second argument is the
+destination process, and the third argument is the message tag with which
+to send the object.  If you're familiar with the C, C++, or Fortran MPI
+bindings, you may notice that there is no datatype or size information
+passed to send().  This is because MPI Ruby is able to treat all Ruby
+objects as messages, so you needn't worry about buffers and types.
+
+On the receiver side, the first argument to recv() is the rank of the
+source process and the second argument is the message tag.  recv() returns
+an array of two values: the message object and the communication status.
+In this example, we take advantage of Ruby's multiple assignment syntax
+to store these values in msg and status.  In the line after the recv()
+call, note the use of the accessors status.source and status.tag.
+These offer more information about the communication that just took place.
+
+
+These examples should get you started and when you're ready to go further,
+look at the documentation to get the syntax and semantics of more MPI
+calls.
+
+Acknowledgements
+================
+I'd like to thank Emil Ong for getting this terrific project started.
+The new maintainer, Rudi Cilibrasi, releases his additions under the
+terms of the GPL.  The following copyright notice is inheritted from
+the original author, Emil Ong.
+
+I'd like to thank the very supportive Ruby mailing list members for all
+their help in making this binding possible.  In particular, I'd like to
+thank Guy Decoux, Wesley James Landaker, Dave Thomas, Kenichi Komiya,
+and, of course, matz.  I'd also like to thank the entire MPICH group
+here at Argonne for being so supportive of the binding.
+
+Copyright
+=========
+The following is a notice of limited availability of the code, and disclaimer
+which must be included in the prologue of the code and in all source listings
+of the code.
+
+Copyright Notice
+ + 2001 University of Chicago
+
+Permission is hereby granted to use, reproduce, prepare derivative works, and
+to redistribute to others.  This software was authored by:
+
+Argonne National Laboratory Group
+E. Ong: (630) 252-5941; e-mail: onge@mcs.anl.gov
+Mathematics and Computer Science Division
+Argonne National Laboratory, Argonne IL 60439
+
+			      GOVERNMENT LICENSE
+
+Portions of this material resulted from work developed under a U.S.
+Government Contract and are subject to the following license: the Government
+is granted for itself and others acting on its behalf a paid-up, nonexclusive,
+irrevocable worldwide license in this computer software to reproduce, prepare
+derivative works, and perform publicly and display publicly.
+
+				  DISCLAIMER
+
+This computer code material was prepared, in part, as an account of work
+sponsored by an agency of the United States Government.  Neither the United
+States, nor the University of Chicago, nor any of their employees, makes any 
+warranty express or implied, or assumes any legal liability or responsibility 
+for the accuracy, completeness, or usefulness of any information, apparatus, 
+product, or process disclosed, or represents that its use would not infringe 
+privately owned rights.
+

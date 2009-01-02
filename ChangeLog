@@ -1,0 +1,137 @@
+Thu Jan 01 19:31:22 EST 2009
+Aaron Bedra
+
+Full merge of sourceforge codebase with other code-bases found on the internet.
+
+Added some project maintainer notices to the code to point to me as the 
+current maintainer.  
+
+Mon Jun 30 14:06:27 CEST 2003
+Rudi Cilibrasi
+
+Fixed bug where mpiruby didn't search the Ruby library path for extension
+modules.
+
+Fixed bug with mpi_ruby crashing when programs finish.
+
+Fixed bug where multiple send from slaves to a single master receiving
+from anywhere could intermingle data length and data parts.
+
+2001-07-27  Emil Ong  <onge@mentat.mcs.anl.gov>
+
+	* examples/irecv.rb: Removed sleep from irecv example
+
+	* configure: Removed configure
+
+	* examples/Makefile.am: Added op example to Makefile
+
+	* examples/redsubmit.rb, examples/op.rb, examples/redhalt.rb, examples/red.rb:
+	New examples:
+	User-defined operations
+	Ruby Execution Daemon (red).
+
+	* src/ops.rb, src/main.c, src/mpi.c, src/mpi_comm.c, src/mpi_group.c, src/mpi_keyval.c, src/mpi_op.c, src/mpi_op_fns.c, src/mpi_request.c:
+	Fixed all of the rb_str_new2()'s that were causing marshalling problems.
+	Fixed defines of singleton methods.
+	Fixed dims_create()
+	Now works with MPICH because of atexit(MPI_Finalize)
+	Set the MPI error handler
+	Fixed operators in MPI::Group (+ -> | and ^ -> &)
+
+	* examples/Makefile.am: New examples.
+
+	* docs/rd/mpi_group.rd, docs/rd/mpi_keyval.rd, docs/rd/mpi_op.rd, docs/rd/mpi_ruby.rd, docs/rd/mpi_comm.rd, docs/man/man3/Makefile.am, docs/man/man3/mpi_comm.3, docs/man/man3/MPI_Ruby.3, docs/man/man3/MPI_Status.3, docs/man/man3/MPI_Exception.3, docs/man/man3/MPI_Group.3, docs/man/man3/MPI_Keyval.3, docs/man/man3/MPI_Op.3, docs/man/man3/MPI_Request.3, docs/man/man3/MPI_Comm.3:
+	Doc updates to reflect fixes to singleton methods in several classes.
+	Typos fixed.
+
+	* docs/man/man1/mpi_ruby.1, docs/man/man1/Makefile.am:
+	Short doc on the interpreter itself (how to run)
+
+	* docs/man/Makefile.am: Added man1
+
+	* docs/html/index.html, docs/html/mpi_comm.html, docs/html/mpi_group.html, docs/html/mpi_keyval.html, docs/html/mpi_op.html, docs/html/mpi_ruby.html:
+	Doc updates to reflect fixes to singleton methods in several classes.
+	Typos fixed.
+
+	* configure, configure.in: Bumped to 0.3
+	Added man1/Makefile to output
+
+2001-07-26  Emil Ong  <onge@mentat.mcs.anl.gov>
+
+	* docs/rd/mpi_comm.rd, docs/rd/Makefile.am, docs/rd/mpi.rd:
+	Added and fixed documentation
+	Updated distribution system appropriately
+
+	* docs/html/Makefile.am:
+	Added the new documentation to the distribution system
+
+	* docs/html/index.html: An index file for the html documentation
+
+	* docs/html/mpi_comm.html, docs/html/mpi.html:
+	Documentation fixes and updates
+
+2001-07-25  Emil Ong  <onge@mentat.mcs.anl.gov>
+
+	* ChangeLog, Makefile.in: Added a changelog
+
+	* src/main.c, src/Makefile.in, src/mpi.c, src/mpi_comm.c, src/Makefile.am:
+	Reverted to pointers for MPI_COMM_WORLD and MPI_COMM_SELF to avoid memory
+	  freeing errors.
+	Redeclared MPI module methods and module methods (duh!)
+	Don't try to free WORLD and SELF
+	Fixed issue with rb_str_new2() in Bcast
+
+	* examples/basic.rb, examples/Makefile.am, examples/rpi.rb:
+	new and fixed examples
+	Added examples to the build path
+
+	* docs/rd/mpi_keyval.rd, docs/rd/mpi_op.rd, docs/rd/mpi_request.rd, docs/rd/mpi_status.rd, docs/rd/Makefile.am, docs/rd/mpi_comm.rd, docs/rd/mpi_exception.rd, docs/rd/mpi_group.rd:
+	Doc additions
+	Documentation should be mostly done now
+
+	* docs/man/man3/Makefile.am, docs/man/Makefile.am, docs/html/mpi_request.html, docs/html/mpi_status.html, docs/html/mpi_comm.html, docs/html/mpi_exception.html, docs/html/mpi_group.html, docs/html/mpi_keyval.html, docs/html/mpi_op.html, docs/html/Makefile.am:
+	Doc additions
+
+	* docs/Makefile.am: Doc addition
+
+	* configure, configure.in, INSTALL, Makefile.am, Makefile.in, README, TODO, COPYRIGHT:
+	Added docs and examples to make path
+	Included COPYRIGHT
+	Other various build fixes and configure cleanups
+
+2001-07-20  Emil Ong  <onge@mentat.mcs.anl.gov>
+
+	* src/mpi_comm.c, src/mpi_request.c, src/main.c, src/mpi.c:
+	Fixed some errors with the constants
+	Now assuming that MPI_Comm's are valid lvalues and rvalues
+
+	* config.status: This never should have gone into CVS
+
+	* docs/html/mpi_comm.html, docs/man/man3/mpi_comm.3, docs/MPI, docs/rd/mpi_comm.rd, docs/rd/mpi_request.rd, examples/allreduce.rb, examples/reduce.rb:
+	Import of MPI_Ruby
+
+
+	* docs/html/mpi_comm.html, docs/man/man3/mpi_comm.3, docs/MPI, docs/rd/mpi_comm.rd, docs/rd/mpi_request.rd, examples/allreduce.rb, examples/reduce.rb:
+	New file.
+
+	* examples/allgather.rb, examples/basic.rb, examples/bcast.rb, examples/gather.rb, examples/hello.rb, examples/irecv.rb, src/Makefile.am, src/Makefile.in, src/mpi_exception.c, src/mpi_exception.h, src/mpi_group.h, src/mpi_keyval.c, src/mpi_keyval.h, src/mpi_op.c, src/mpi_op.h, src/ops.rb:
+	Import of MPI_Ruby
+
+
+	* examples/allgather.rb, examples/basic.rb, examples/bcast.rb, examples/gather.rb, examples/hello.rb, examples/irecv.rb, src/Makefile.am, src/Makefile.in, src/mpi_exception.c, src/mpi_exception.h, src/mpi_group.h, src/mpi_keyval.c, src/mpi_keyval.h, src/mpi_op.c, src/mpi_op.h, src/ops.rb:
+	New file.
+
+	* config.guess, config.status, config.sub, configure, depcomp, mkinstalldirs, src/global.h, src/main.c, src/mpi.c, src/mpi_comm.c, src/mpi_comm.h, src/mpi_group.c, src/mpi_op_fns.c, src/mpi_request.c, src/mpi_request.h, src/mpi_status.c, src/mpi_status.h, stamp-h.in:
+	Import of MPI_Ruby
+
+
+	* config.guess, config.status, config.sub, configure, depcomp, mkinstalldirs, src/global.h, src/main.c, src/mpi.c, src/mpi_comm.c, src/mpi_comm.h, src/mpi_group.c, src/mpi_op_fns.c, src/mpi_request.c, src/mpi_request.h, src/mpi_status.c, src/mpi_status.h, stamp-h.in:
+	New file.
+
+	* aclocal.m4, config.h.in, configure.in, install-sh, Makefile.am, Makefile.in, missing, TODO:
+	Import of MPI_Ruby
+
+
+	* aclocal.m4, config.h.in, configure.in, install-sh, Makefile.am, Makefile.in, missing, TODO:
+	New file.
+

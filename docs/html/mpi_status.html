@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html 
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mpi_status.rd</title>
+</head>
+<body>
+<h1><a name="label:0" id="label:0">MPI::Status</a></h1><!-- RDLabel: "MPI::Status" -->
+<h2><a name="label:1" id="label:1">Description</a></h2><!-- RDLabel: "Description" -->
+<p>A wrapper class around MPI status </p>
+<h2><a name="label:2" id="label:2">Methods</a></h2><!-- RDLabel: "Methods" -->
+<h3><a name="label:3" id="label:3">Informational Methods</a></h3><!-- RDLabel: "Informational Methods" -->
+<dl>
+<dt><a name="label:4" id="label:4"><code>MPI::Status#source()</code></a></dt><!-- RDLabel: "MPI::Status#source" -->
+<dd>
+<p>Returns the source of the message to which the status object refers.</p>
+<p>C equivalent: <code>status.MPI_STATUS</code></p></dd>
+<dt><a name="label:5" id="label:5"><code>MPI::Status#tag()</code></a></dt><!-- RDLabel: "MPI::Status#tag" -->
+<dd>
+<p>Returns the tag of the message to which the status object refers.</p>
+<p>C equivalent: <code>status.MPI_TAG</code></p></dd>
+<dt><a name="label:6" id="label:6"><code>MPI::Status#cancelled?()</code></a></dt><!-- RDLabel: "MPI::Status#cancelled?" -->
+<dd>
+<p>Returns whether or not the message to which the status object refers was
+cancelled.</p>
+<p>C equivalent: <code>MPI_Test_cancelled()</code></p></dd>
+</dl>
+
+</body>
+</html>
