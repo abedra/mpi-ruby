@@ -1,256 +1,256 @@
 #include "mpi.h"
-#include "ruby.h"
+#include "ruby/ruby.h"
 #include "global.h"
 
 VALUE cComm, cIntraComm;
 static VALUE SELF, WORLD, ANY_TAG, ANY_SOURCE, GRAPH, CART, COMM_NULL;
 
 struct mpi_comm {
-    MPI_Comm *comm;
-    char *buffer;
-    long bufsize;
+  MPI_Comm *comm;
+  char *buffer;
+  long bufsize;
 };
 
 static void comm_free(struct mpi_comm *comm)
 {
-    free(comm->buffer);
-    if ((*comm->comm != MPI_COMM_WORLD) && (*comm->comm != MPI_COMM_SELF))
-        MPI_Comm_free(comm->comm);
-    free(comm->comm);
-    free(comm);
+  free(comm->buffer);
+  if ((*comm->comm != MPI_COMM_WORLD) && (*comm->comm != MPI_COMM_SELF))
+    MPI_Comm_free(comm->comm);
+  free(comm->comm);
+  free(comm);
 }
 
 static VALUE comm_new(struct mpi_comm *comm)
 {
-    VALUE tdata;
+  VALUE tdata;
 
-    tdata = Data_Wrap_Struct(cComm, NULL, comm_free, comm);
-    rb_obj_call_init(tdata, 0, NULL);
+  tdata = Data_Wrap_Struct(cComm, NULL, comm_free, comm);
+  rb_obj_call_init(tdata, 0, NULL);
 
-    return tdata;
+  return tdata;
 }
 
 static VALUE intra_comm_new(struct mpi_comm *comm)
 {
-    VALUE tdata;
+  VALUE tdata;
 
-    tdata = Data_Wrap_Struct(cIntraComm, NULL, comm_free, comm);
-    rb_obj_call_init(tdata, 0, NULL);
+  tdata = Data_Wrap_Struct(cIntraComm, NULL, comm_free, comm);
+  rb_obj_call_init(tdata, 0, NULL);
 
-    return tdata;
+  return tdata;
 }
 
 /* Constructors */
 static VALUE comm_dup(VALUE self)
 {
-    int rv;
-    struct mpi_comm *mc_comm, *newcomm;
+  int rv;
+  struct mpi_comm *mc_comm, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    rv = MPI_Comm_dup(*mc_comm->comm, newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Comm_dup(*mc_comm->comm, newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 static VALUE comm_create(VALUE self, VALUE rgrp)
 {
-    int rv;
-    MPI_Group *grp;
-    struct mpi_comm *mc_comm, *newcomm;
+  int rv;
+  MPI_Group *grp;
+  struct mpi_comm *mc_comm, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    grp = group_get_mpi_group(rgrp);
+  grp = group_get_mpi_group(rgrp);
     
-    rv = MPI_Comm_create(*mc_comm->comm, *grp, newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Comm_create(*mc_comm->comm, *grp, newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 static VALUE comm_intercomm_create(VALUE self, VALUE rlocal_leader, 
                                    VALUE rpeer, VALUE rremote_leader, 
                                    VALUE rtag)
 {
-    int rv, local_leader, remote_leader, tag;
-    struct mpi_comm *mc_comm, *peer, *newcomm;
+  int rv, local_leader, remote_leader, tag;
+  struct mpi_comm *mc_comm, *peer, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
-    Data_Get_Struct(rpeer, struct mpi_comm, peer);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(rpeer, struct mpi_comm, peer);
 
-    Check_Type(rlocal_leader, T_FIXNUM);
-    Check_Type(rremote_leader, T_FIXNUM);
+  Check_Type(rlocal_leader, T_FIXNUM);
+  Check_Type(rremote_leader, T_FIXNUM);
 
-    local_leader = FIX2INT(rlocal_leader);
-    remote_leader = FIX2INT(rremote_leader);
+  local_leader = FIX2INT(rlocal_leader);
+  remote_leader = FIX2INT(rremote_leader);
 
-    if (rtag == ANY_TAG) {
-        tag = MPI_ANY_TAG;
-    } else {
-        Check_Type(rtag, T_FIXNUM);
-        tag = FIX2INT(rtag);
-    }
+  if (rtag == ANY_TAG) {
+    tag = MPI_ANY_TAG;
+  } else {
+    Check_Type(rtag, T_FIXNUM);
+    tag = FIX2INT(rtag);
+  }
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    rv = MPI_Intercomm_create(*mc_comm->comm, local_leader, 
-                              *peer->comm, remote_leader, tag, 
-                              newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Intercomm_create(*mc_comm->comm, local_leader, 
+			    *peer->comm, remote_leader, tag, 
+			    newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 static VALUE comm_intercomm_merge(VALUE self, VALUE rhigh)
 {
-    int rv, high;
-    struct mpi_comm *mc_comm, *newcomm;
+  int rv, high;
+  struct mpi_comm *mc_comm, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    Check_Type(rhigh, T_FIXNUM);
-    high = FIX2INT(rhigh);
+  Check_Type(rhigh, T_FIXNUM);
+  high = FIX2INT(rhigh);
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    rv = MPI_Intercomm_merge(*mc_comm->comm, high, newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Intercomm_merge(*mc_comm->comm, high, newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 static VALUE comm_split(VALUE self, VALUE rcolor, VALUE rkey)
 {
-    int rv, color, key;
-    struct mpi_comm *mc_comm, *newcomm;
+  int rv, color, key;
+  struct mpi_comm *mc_comm, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    Check_Type(rcolor, T_FIXNUM);
-    Check_Type(rkey, T_FIXNUM);
+  Check_Type(rcolor, T_FIXNUM);
+  Check_Type(rkey, T_FIXNUM);
 
-    color = FIX2INT(rcolor);
-    key = FIX2INT(rkey);
+  color = FIX2INT(rcolor);
+  key = FIX2INT(rkey);
 
-    rv = MPI_Comm_split(*mc_comm->comm, color, key, newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Comm_split(*mc_comm->comm, color, key, newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 /* Topologies */
 static VALUE comm_cart_create(VALUE self, VALUE rdims, VALUE rperiods, 
                               VALUE rreorder)
 {
-    int rv, i, ndims, *dims, *periods, reorder;
-    struct mpi_comm *mc_comm, *newcomm;
+  int rv, i, ndims, *dims, *periods, reorder;
+  struct mpi_comm *mc_comm, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    ndims = RARRAY(rdims)->len;
-    if (RARRAY(rperiods)->len != ndims) {
-        mpi_exception(MPI_ERR_ARG);
-        return Qnil;
-    }
+  ndims = RARRAY(rdims)->len;
+  if (RARRAY(rperiods)->len != ndims) {
+    mpi_exception(MPI_ERR_ARG);
+    return Qnil;
+  }
 
-    dims = ALLOCA_N(int, ndims);
-    periods = ALLOCA_N(int, ndims);
+  dims = ALLOCA_N(int, ndims);
+  periods = ALLOCA_N(int, ndims);
 
-    Check_Type(rreorder, T_FIXNUM);
+  Check_Type(rreorder, T_FIXNUM);
 
-    reorder = FIX2INT(rreorder);
+  reorder = FIX2INT(rreorder);
 
-    for (i = 0; i < ndims; i++) {
-        dims[i] = FIX2INT(rb_ary_entry(rdims, i));
-        /* Qfalse and Qnil are the only values in Ruby that evaluate to 
-           non-true. */
-        periods[i] = (rb_ary_entry(rperiods, i) != Qfalse) && 
-                     (rb_ary_entry(rperiods, i) != Qnil);
-    }
+  for (i = 0; i < ndims; i++) {
+    dims[i] = FIX2INT(rb_ary_entry(rdims, i));
+    /* Qfalse and Qnil are the only values in Ruby that evaluate to 
+       non-true. */
+    periods[i] = (rb_ary_entry(rperiods, i) != Qfalse) && 
+      (rb_ary_entry(rperiods, i) != Qnil);
+  }
 
-    rv = MPI_Cart_create(*mc_comm->comm, ndims, dims, periods, reorder, 
-                         newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Cart_create(*mc_comm->comm, ndims, dims, periods, reorder, 
+		       newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 static VALUE comm_graph_create(VALUE self, VALUE rindex, VALUE redges, 
                                VALUE rreorder)
 {
-    int rv, i, nnodes, nedges, *index, *edges, reorder;
-    struct mpi_comm *mc_comm, *newcomm;
+  int rv, i, nnodes, nedges, *index, *edges, reorder;
+  struct mpi_comm *mc_comm, *newcomm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    newcomm = ALLOC(struct mpi_comm);
-    newcomm->comm = ALLOC(MPI_Comm);
-    newcomm->buffer = NULL;
-    newcomm->bufsize = 0;
+  newcomm = ALLOC(struct mpi_comm);
+  newcomm->comm = ALLOC(MPI_Comm);
+  newcomm->buffer = NULL;
+  newcomm->bufsize = 0;
 
-    nnodes = RARRAY(rindex)->len;
-    nedges = RARRAY(rindex)->len;
+  nnodes = RARRAY(rindex)->len;
+  nedges = RARRAY(rindex)->len;
 
-    index = ALLOCA_N(int, nnodes);
-    edges = ALLOCA_N(int, nedges);
+  index = ALLOCA_N(int, nnodes);
+  edges = ALLOCA_N(int, nedges);
 
-    Check_Type(rreorder, T_FIXNUM);
+  Check_Type(rreorder, T_FIXNUM);
 
-    reorder = FIX2INT(rreorder);
+  reorder = FIX2INT(rreorder);
 
-    for (i = 0; i < nnodes; i++)
-        index[i] = FIX2INT(rb_ary_entry(rindex, i));
+  for (i = 0; i < nnodes; i++)
+    index[i] = FIX2INT(rb_ary_entry(rindex, i));
 
-    for (i = 0; i < nedges; i++)
-        edges[i] = FIX2INT(rb_ary_entry(redges, i));
+  for (i = 0; i < nedges; i++)
+    edges[i] = FIX2INT(rb_ary_entry(redges, i));
 
-    rv = MPI_Graph_create(*mc_comm->comm, nnodes, index, edges, reorder, 
-                          newcomm->comm);
-    mpi_exception(rv);
+  rv = MPI_Graph_create(*mc_comm->comm, nnodes, index, edges, reorder, 
+			newcomm->comm);
+  mpi_exception(rv);
 
-    return comm_new(newcomm);
+  return comm_new(newcomm);
 }
 
 static VALUE comm_topo_test(VALUE self)
 {
-    int rv, status;
-    struct mpi_comm *mc_comm;
+  int rv, status;
+  struct mpi_comm *mc_comm;
 
-    Data_Get_Struct(self, struct mpi_comm, mc_comm);
+  Data_Get_Struct(self, struct mpi_comm, mc_comm);
 
-    rv = MPI_Topo_test(*mc_comm->comm, &status);
-    mpi_exception(rv);
+  rv = MPI_Topo_test(*mc_comm->comm, &status);
+  mpi_exception(rv);
 
-    switch (status) {
-        case MPI_GRAPH:
+  switch (status) {
+  case MPI_GRAPH:
             return GRAPH;
         case MPI_CART:
             return CART;

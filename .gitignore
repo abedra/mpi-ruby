@@ -16,3 +16,4 @@ src/*.o
 src/mpi_op_fns.c
 src/mpi_ruby
 stamp-h1
+autom4te.cache/

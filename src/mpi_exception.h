@@ -1,7 +1,7 @@
 #ifndef MPI_RUBY_EXCEPTION_H
 #define MPI_RUBY_EXCEPTION_H
 
-#include "ruby.h"
+#include "ruby/ruby.h"
 
 extern VALUE cException;
 extern void mpi_exception(int retcode);

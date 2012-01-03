@@ -1,5 +1,5 @@
 #include "mpi.h"
-#include "ruby.h"
+#include "ruby/ruby.h"
 #include "global.h"
 
 VALUE cStatus;

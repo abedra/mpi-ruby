@@ -43,7 +43,7 @@ else
 fi
 
 AC_MSG_CHECKING(ruby version >= 1.6.4)
-RUBY_VERSION=`$RUBY -e 'puts VERSION'`
+RUBY_VERSION=`$RUBY -e 'puts RUBY_VERSION'`
 # @<:@ = '[' and @:>@ = ']' in autoconf.  This stinks.
 RUBY_MAJOR=`$RUBY -e 'puts VERSION.split(".")@<:@0@:>@'`
 if test "$RUBY_MAJOR" -lt "1"; then

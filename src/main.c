@@ -1,59 +1,58 @@
 #include "mpi.h"
-#include "ruby.h"
+#include "ruby/ruby.h"
 #include <signal.h>
-
 #include "global.h"
 
 MPI_Comm *self, *world;
 
 int main(int argc, char *argv[])
 {
-    void (*sigusr1)(int), (*sigusr2)(int);
-    
-	MPI_Init(&argc, &argv);
+  void (*sigusr1)(int), (*sigusr2)(int);
 
-    /* ruby_run() calls exit() (why?), so we have to call finalize this way. */
-    atexit((void (*)(void))MPI_Finalize);
+  MPI_Init(&argc, &argv);
 
-    /* Allow errors to be returned as exceptions in ruby */
-    MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
+  /* ruby_run() calls exit() (why?), so we have to call finalize this way. */
+  atexit((void (*)(void))MPI_Finalize);
 
-    /* This seems legitimate because comms can be passed by value to fns. */
-    self = malloc(sizeof(MPI_Comm));
-    if (self == NULL) {
-        perror("Unable to allocate MPI::Comm::SELF");
-        MPI_Finalize();
-        exit(1);
-    }
-    *self = MPI_COMM_SELF;
+  /* Allow errors to be returned as exceptions in ruby */
+  MPI_Errhandler_set(MPI_COMM_WORLD, MPI_ERRORS_RETURN);
 
-    world = malloc(sizeof(MPI_Comm));
-    if (self == NULL) {
-        perror("Unable to allocate MPI::Comm::WORLD");
-        MPI_Finalize();
-        exit(1);
-    }
-    *world = MPI_COMM_WORLD;
+  /* This seems legitimate because comms can be passed by value to fns. */
+  self = malloc(sizeof(MPI_Comm));
+  if (self == NULL) {
+    perror("Unable to allocate MPI::Comm::SELF");
+    MPI_Finalize();
+    exit(1);
+  }
+  *self = MPI_COMM_SELF;
 
-    MPI_Barrier(*world);
-    sigusr1 = signal(SIGUSR1, SIG_IGN);
-    sigusr2 = signal(SIGUSR2, SIG_IGN);
+  world = malloc(sizeof(MPI_Comm));
+  if (self == NULL) {
+    perror("Unable to allocate MPI::Comm::WORLD");
+    MPI_Finalize();
+    exit(1);
+  }
+  *world = MPI_COMM_WORLD;
 
-	ruby_init();
+  MPI_Barrier(*world);
+  sigusr1 = signal(SIGUSR1, SIG_IGN);
+  sigusr2 = signal(SIGUSR2, SIG_IGN);
+
+  ruby_init();
   ruby_init_loadpath();
-	ruby_options(argc, argv);
+  ruby_options(argc, argv);
 
-    signal(SIGUSR1, sigusr1);
-    signal(SIGUSR2, sigusr2);
-    MPI_Barrier(*world);
+  signal(SIGUSR1, sigusr1);
+  signal(SIGUSR2, sigusr2);
+  MPI_Barrier(*world);
 
-    Init_MPI();
+  Init_MPI();
 
-	ruby_run();
+  ruby_run();
 
-    /* Unreachable */
-	
-	MPI_Finalize();
+  /* Unreachable */
 
-	return 0;
+  MPI_Finalize();
+
+  return 0;
 }
