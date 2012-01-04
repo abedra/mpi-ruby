@@ -629,7 +629,7 @@ static VALUE comm_send(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     rv = MPI_Send(&length, 1, MPI_INT, dest, tag, *mc_comm->comm);
     mpi_exception(rv);
@@ -700,7 +700,7 @@ static VALUE comm_bsend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     rv = MPI_Bsend(&length, 1, MPI_INT, dest, tag, *mc_comm->comm);
     mpi_exception(rv);
@@ -732,7 +732,7 @@ static VALUE comm_ssend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     rv = MPI_Ssend(&length, 1, MPI_INT, dest, tag, *mc_comm->comm);
     mpi_exception(rv);
@@ -764,7 +764,7 @@ static VALUE comm_rsend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     /* Note: we only care about the first one being a ready send. */
     /* If it works, that means the user did the correct thing. */
@@ -815,7 +815,7 @@ static VALUE comm_sendrecv(VALUE self, VALUE obj, VALUE rdest, VALUE rdtag,
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    ddata = rb_str2cstr(dump, &dlen);
+    ddata = StringValueCStr(dump);
 
     stat = ALLOC(MPI_Status);
     
@@ -862,7 +862,7 @@ static VALUE comm_isend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     req = ALLOC(MPI_Request);
 
@@ -897,7 +897,7 @@ static VALUE comm_issend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     req = ALLOC(MPI_Request);
 
@@ -933,7 +933,7 @@ static VALUE comm_ibsend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
 
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     req = ALLOC(MPI_Request);
 
@@ -968,7 +968,7 @@ static VALUE comm_irsend(VALUE self, VALUE obj, VALUE rdest, VALUE rtag)
     }
 
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    data = rb_str2cstr(dump, &length);
+    data = StringValueCStr(dump);
 
     req = ALLOC(MPI_Request);
 
@@ -1200,7 +1200,7 @@ static VALUE comm_bcast(VALUE self, VALUE obj, VALUE rroot)
         VALUE dump;
 
         dump = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(dump, &length);
+        data = StringValueCStr(dump);
     }
 
     rv = MPI_Bcast(&length, 1, MPI_INT, root, *mc_comm->comm);
@@ -1277,7 +1277,7 @@ static VALUE comm_gather(VALUE self, VALUE obj, VALUE rroot)
         MPI_Status stats[2];
 
         dump = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(dump, &length);
+        data = StringValueCStr(dump);
 
         rv = MPI_Isend(&length, 1, MPI_INT, root, GATHER_TAG, 
                        *mc_comm->comm, &reqs[0]);
@@ -1336,8 +1336,10 @@ static VALUE comm_allgather(VALUE self, VALUE obj)
     jnext = left;
     for (i = 1; i < csize; i++) {
         MPI_Status stat;
+	
+	VALUE pos = rb_ary_entry(ary, j);
 
-        out = rb_str2cstr(rb_ary_entry(ary, j), &length_right);
+        out = StringValueCStr(pos);
 
         rv = MPI_Sendrecv(&length_right, 1, MPI_INT, right, ALLGATHER_TAG,
                 &length_left, 1, MPI_INT, left, ALLGATHER_TAG, *mc_comm->comm,
@@ -1394,7 +1396,7 @@ static VALUE comm_scatter(VALUE self, VALUE ary, VALUE rroot)
         
         for (i = 0; i < csize; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(ary, i));
-            datav[i].str = rb_str2cstr(dump, &datav[i].length);
+            datav[i].str = StringValueCStr(dump);
 
             if (datav[i].length + 1 > longest)
                 longest = datav[i].length + 1;
@@ -1453,7 +1455,7 @@ static VALUE comm_alltoall(VALUE self, VALUE sary)
         VALUE dump;
 
         dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(sary, i));
-        datav[i].str = rb_str2cstr(dump, &datav[i].length);
+        datav[i].str = StringValueCStr(dump);
 
         if (datav[i].length + 1 > longest)
             longest = datav[i].length + 1;
@@ -1530,7 +1532,7 @@ static VALUE comm_reduce(VALUE self, VALUE obj, VALUE rop, VALUE rroot)
     if (arylen >= 0) {
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            rb_str2cstr(dump, &length);
+            StringValueCStr(dump);
 
             if (length > longest)
                 longest = length;
@@ -1539,7 +1541,7 @@ static VALUE comm_reduce(VALUE self, VALUE obj, VALUE rop, VALUE rroot)
         length = longest;
     } else {
         dump = rb_funcall(mMarshal, id_dump, 1, obj);
-        tmp = rb_str2cstr(dump, &length);
+        tmp = StringValueCStr(dump);
     }
 
     /* Global length check */
@@ -1561,7 +1563,7 @@ static VALUE comm_reduce(VALUE self, VALUE obj, VALUE rop, VALUE rroot)
         
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
 
             MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
         }
@@ -1586,7 +1588,7 @@ static VALUE comm_reduce(VALUE self, VALUE obj, VALUE rop, VALUE rroot)
             /* The send buffer is likely to have gotten munged. Reinit. */
             for (i = 0; i < arylen; i++) {
                 dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-                tmp = rb_str2cstr(dump, &length);
+                tmp = StringValueCStr(dump);
 
                 MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
             }
@@ -1641,7 +1643,7 @@ static VALUE comm_reduce(VALUE self, VALUE obj, VALUE rop, VALUE rroot)
 
             /* The send buffer is likely to have gotten munged. Reinit. */
             dump = rb_funcall(mMarshal, id_dump, 1, obj);
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
             MEMCPY(send, tmp, char, length + 1);
 
             rv = MPI_Reduce(send, recv, 1, dtype, *op_get_mpi_op(rop), 
@@ -1691,7 +1693,7 @@ static VALUE comm_allreduce(VALUE self, VALUE obj, VALUE rop)
     if (arylen >= 0) {
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            rb_str2cstr(dump, &length);
+            StringValueCStr(dump);
 
             if (length > longest)
                 longest = length;
@@ -1700,7 +1702,7 @@ static VALUE comm_allreduce(VALUE self, VALUE obj, VALUE rop)
         length = longest;
     } else {
         dump = rb_funcall(mMarshal, id_dump, 1, obj);
-        tmp = rb_str2cstr(dump, &length);
+        tmp = StringValueCStr(dump);
     }
 
     /* Global length check */
@@ -1722,7 +1724,7 @@ static VALUE comm_allreduce(VALUE self, VALUE obj, VALUE rop)
         
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
 
             MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
         }
@@ -1747,7 +1749,7 @@ static VALUE comm_allreduce(VALUE self, VALUE obj, VALUE rop)
             /* The send buffer is likely to have gotten munged. Reinit. */
             for (i = 0; i < arylen; i++) {
                 dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-                tmp = rb_str2cstr(dump, &length);
+                tmp = StringValueCStr(dump);
 
                 MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
             }
@@ -1796,7 +1798,7 @@ static VALUE comm_allreduce(VALUE self, VALUE obj, VALUE rop)
 
             /* The send buffer is likely to have gotten munged. Reinit. */
             dump = rb_funcall(mMarshal, id_dump, 1, obj);
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
             MEMCPY(send, tmp, char, length + 1);
 
             rv = MPI_Allreduce(send, recv, 1, dtype, *op_get_mpi_op(rop), 
@@ -1843,7 +1845,7 @@ static VALUE comm_scan(VALUE self, VALUE obj, VALUE rop)
     if (arylen >= 0) {
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            rb_str2cstr(dump, &length);
+            StringValueCStr(dump);
 
             if (length > longest)
                 longest = length;
@@ -1852,7 +1854,7 @@ static VALUE comm_scan(VALUE self, VALUE obj, VALUE rop)
         length = longest;
     } else {
         dump = rb_funcall(mMarshal, id_dump, 1, obj);
-        tmp = rb_str2cstr(dump, &length);
+        tmp = StringValueCStr(dump);
     }
 
     /* Global length check */
@@ -1874,7 +1876,7 @@ static VALUE comm_scan(VALUE self, VALUE obj, VALUE rop)
         
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
 
             MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
         }
@@ -1899,7 +1901,7 @@ static VALUE comm_scan(VALUE self, VALUE obj, VALUE rop)
             /* The send buffer is likely to have gotten munged. Reinit. */
             for (i = 0; i < arylen; i++) {
                 dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-                tmp = rb_str2cstr(dump, &length);
+                tmp = StringValueCStr(dump);
 
                 MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
             }
@@ -1948,7 +1950,7 @@ static VALUE comm_scan(VALUE self, VALUE obj, VALUE rop)
 
             /* The send buffer is likely to have gotten munged. Reinit. */
             dump = rb_funcall(mMarshal, id_dump, 1, obj);
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
             MEMCPY(send, tmp, char, length + 1);
 
             rv = MPI_Scan(send, recv, 1, dtype, *op_get_mpi_op(rop), 
@@ -2018,7 +2020,7 @@ static VALUE comm_reduce_scatter(VALUE self, VALUE obj, VALUE rcounts,
     if (arylen >= 0) {
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            rb_str2cstr(dump, &length);
+            StringValueCStr(dump);
 
             if (length > longest)
                 longest = length;
@@ -2027,7 +2029,7 @@ static VALUE comm_reduce_scatter(VALUE self, VALUE obj, VALUE rcounts,
         length = longest;
     } else {
         dump = rb_funcall(mMarshal, id_dump, 1, obj);
-        tmp = rb_str2cstr(dump, &length);
+        tmp = StringValueCStr(dump);
     }
 
     /* Global length check */
@@ -2050,7 +2052,7 @@ static VALUE comm_reduce_scatter(VALUE self, VALUE obj, VALUE rcounts,
         send = ALLOCA_N(char, (longest + 1) * arylen);
         for (i = 0; i < arylen; i++) {
             dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
 
             MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
         }
@@ -2075,7 +2077,7 @@ static VALUE comm_reduce_scatter(VALUE self, VALUE obj, VALUE rcounts,
             /* The send buffer is likely to have gotten munged. Reinit. */
             for (i = 0; i < arylen; i++) {
                 dump = rb_funcall(mMarshal, id_dump, 1, rb_ary_entry(obj, i));
-                tmp = rb_str2cstr(dump, &length);
+                tmp = StringValueCStr(dump);
 
                 MEMCPY(send + (i * (longest + 1)), tmp, char, length + 1);
             }
@@ -2123,7 +2125,7 @@ static VALUE comm_reduce_scatter(VALUE self, VALUE obj, VALUE rcounts,
 
             /* The send buffer is likely to have gotten munged. Reinit. */
             dump = rb_funcall(mMarshal, id_dump, 1, obj);
-            tmp = rb_str2cstr(dump, &length);
+            tmp = StringValueCStr(dump);
             MEMCPY(send, tmp, char, length + 1);
 
             rv = MPI_Reduce_scatter(send, recv, recvcounts, dtype, 
@@ -2302,7 +2304,7 @@ static VALUE comm_attr_put(VALUE self, VALUE keyval, VALUE obj)
     av = ALLOC(struct mpi_attr_val);
     
     dump = rb_funcall(mMarshal, id_dump, 1, obj);
-    av->data = rb_str2cstr(dump, &av->len);
+    av->data = StringValueCStr(dump);
 
     rv = MPI_Attr_put(*mc_comm->comm, keyval_get_keyval(keyval), av);
     mpi_exception(rv);

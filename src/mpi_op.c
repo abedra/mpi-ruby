@@ -181,7 +181,7 @@ static void op_sum(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_sum, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -212,7 +212,7 @@ static void op_prod(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_prod, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -243,7 +243,7 @@ static void op_lor(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_lor, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -274,7 +274,7 @@ static void op_bor(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_bor, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -305,7 +305,7 @@ static void op_land(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_land, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -336,7 +336,7 @@ static void op_band(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_band, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -370,7 +370,7 @@ static void op_lxor(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         val = (val1 || val2) && (!val1 || !val2);
 
         str = rb_funcall(mMarshal, id_dump, 1, rb_fix_new(val));
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;
@@ -401,7 +401,7 @@ static void op_bxor(void *invec, void *inoutvec, int *len, MPI_Datatype *dtype)
         obj = rb_funcall(receiver, id_bxor, 1, arg);
 
         str = rb_funcall(mMarshal, id_dump, 1, obj);
-        data = rb_str2cstr(str, &length);
+        data = StringValueCStr(str);
 
         if (length + 1 > size) {
             op_table[0].resize = length + 1;

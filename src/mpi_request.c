@@ -567,7 +567,7 @@ VALUE request_start(VALUE self)
         case PSEND:
             dump = rb_funcall(mMarshal, id_dump, 1, mr->obj);
             free(mr->buf);
-            mr->buf = rb_str2cstr(dump, &mr->buflen);
+            mr->buf = StringValueCStr(dump);
 
             rv = MPI_Isend(&mr->buflen, 1, MPI_INT, mr->peer, mr->tag, 
                            *mr->comm, &tmp);
@@ -580,7 +580,7 @@ VALUE request_start(VALUE self)
         case PBSEND:
             dump = rb_funcall(mMarshal, id_dump, 1, mr->obj);
             free(mr->buf);
-            mr->buf = rb_str2cstr(dump, &mr->buflen);
+            mr->buf = StringValueCStr(dump);
 
             rv = MPI_Ibsend(&mr->buflen, 1, MPI_INT, mr->peer, mr->tag, 
                            *mr->comm, &tmp);
@@ -593,7 +593,7 @@ VALUE request_start(VALUE self)
         case PSSEND:
             dump = rb_funcall(mMarshal, id_dump, 1, mr->obj);
             free(mr->buf);
-            mr->buf = rb_str2cstr(dump, &mr->buflen);
+            mr->buf = StringValueCStr(dump);
 
             rv = MPI_Issend(&mr->buflen, 1, MPI_INT, mr->peer, mr->tag, 
                            *mr->comm, &tmp);
@@ -606,7 +606,7 @@ VALUE request_start(VALUE self)
         case PRSEND:
             dump = rb_funcall(mMarshal, id_dump, 1, mr->obj);
             free(mr->buf);
-            mr->buf = rb_str2cstr(dump, &mr->buflen);
+            mr->buf = StringValueCStr(dump);
 
             rv = MPI_Irsend(&mr->buflen, 1, MPI_INT, mr->peer, mr->tag, 
                            *mr->comm, &tmp);
